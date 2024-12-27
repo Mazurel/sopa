@@ -1,0 +1,13 @@
+_version: 2
+select-tags:
+  en: Please select tags
+  pl: Wybierz typy placówek, które cię interesują
+gender:female:
+  en: "Female"
+  pl: "Kobieta"
+gender:male:
+  en: "Male"
+  pl: "Mężczyzna"
+sexuality:lgbt:
+  en: "LGBT"
+  pl: "LGBT"

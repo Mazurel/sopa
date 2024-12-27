@@ -1,4 +1,5 @@
 mod app;
+mod tag;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]
