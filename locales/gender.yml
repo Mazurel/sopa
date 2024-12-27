@@ -1,0 +1,13 @@
+_version: 2
+gender-female:
+  en: "Female"
+  pl: "Kobieta"
+gender-male:
+  en: "Male"
+  pl: "Mężczyzna"
+gender-other:
+  en: "Other"
+  pl: "Other"
+gender-selection:
+  en: "Please choose Gender"
+  pl: "Proszę o wybranie płci"
