@@ -1,4 +1,7 @@
 _version: 2
+location-tags-info:
+  en: Associated tags
+  pl: Oznaczenia powiązane z placówką
 select-tags:
   en: Please select tags
   pl: Wybierz typy placówek, które cię interesują
@@ -11,3 +14,6 @@ gender:male:
 sexuality:lgbt:
   en: "LGBT"
   pl: "LGBT"
+type:hostel:
+  en: "Hostel"
+  pl: "Hostel"

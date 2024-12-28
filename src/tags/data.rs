@@ -1,12 +1,12 @@
 use rust_i18n::t;
 use std::collections::HashMap;
 
-pub type TagId = usize;
+pub type TagId = String;
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct Tag {
     pub name: String,
-    tag_id: TagId,
+    pub description: String,
 }
 
 impl Tag {
@@ -15,22 +15,21 @@ impl Tag {
             "gender:male" => t!("gender:male"),
             "gender:female" => t!("gender:female"),
             "sexuality:lgbt" => t!("sexuality:lgbt"),
+            "type:hostel" => t!("type:hostel"),
             _ => std::borrow::Cow::Owned(self.name.clone()),
         }
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Tags {
     tags: HashMap<TagId, Tag>,
-    current_id: TagId,
 }
 
 impl Tags {
     pub fn new() -> Self {
         Tags {
             tags: HashMap::new(),
-            current_id: 0,
         }
     }
 
@@ -42,12 +41,6 @@ impl Tags {
         tags
     }
 
-    fn next_tag_id(&mut self) -> TagId {
-        let result = self.current_id;
-        self.current_id += 1;
-        result
-    }
-
     pub fn get_all_tags(&self) -> Vec<&Tag> {
         self.tags.values().collect()
     }
@@ -57,12 +50,12 @@ impl Tags {
     }
 
     pub fn define_tag<Str: ToString>(&mut self, tag_name: Str) -> Option<TagId> {
-        let tag_id = self.next_tag_id();
+        let tag_id = tag_name.to_string();
         let tag = Tag {
             name: tag_name.to_string(),
-            tag_id,
+            description: String::from(""),
         };
-        let insert_ok = self.tags.insert(tag_id, tag).is_none();
+        let insert_ok = self.tags.insert(tag_id.clone(), tag).is_none();
 
         match insert_ok {
             true => Some(tag_id),

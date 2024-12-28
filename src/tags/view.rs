@@ -9,14 +9,16 @@ pub enum TagSelectionType {
 }
 
 #[derive(Properties, PartialEq)]
-struct SelectableTagProps {
-    tag: Tag,
-    selection_type: TagSelectionType,
-    selection_changed: Callback<TagSelectionType>,
+pub struct SelectableTagProps {
+    pub tag: Tag,
+    pub selection_type: TagSelectionType,
+    #[prop_or(true)]
+    pub interactive: bool,
+    selection_changed: Option<Callback<TagSelectionType>>,
 }
 
 #[function_component(SelectableTag)]
-fn selectable_tag(props: &SelectableTagProps) -> Html {
+pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     use TagSelectionType::*;
 
     let tag_selection_state = use_state(|| props.selection_type);
@@ -35,14 +37,20 @@ fn selectable_tag(props: &SelectableTagProps) -> Html {
     match *tag_selection_state.clone() {
         Acceptable => {
             classes.push("is-success".to_string());
+            classes.push("is-clickable".to_string());
             classes.push("has-text-grey-darker".to_string());
             classes.push("has-background-info-light".to_string());
-            props.selection_changed.emit(Acceptable);
+            if let Some(selection_changed) = &props.selection_changed {
+                selection_changed.emit(Acceptable);
+            }
         }
         NonAcceptable => {
             classes.push("is-danger".to_string());
+            classes.push("is-clickable".to_string());
             classes.push("has-background-danger-light".to_string());
-            props.selection_changed.emit(NonAcceptable);
+            if let Some(selection_changed) = &props.selection_changed {
+                selection_changed.emit(NonAcceptable);
+            }
         }
     }
     classes.append(&mut vec![
@@ -53,36 +61,42 @@ fn selectable_tag(props: &SelectableTagProps) -> Html {
         "is-hoverable".to_string(),
         "p-4".to_string(),
         "m-2".to_string(),
-        "is-clickable".to_string(),
         "is-unselectable".to_string(),
     ]);
 
     let text_classes = classes.join(" ").to_string();
-    html!(
-        <div class={text_classes} {onclick}>
-            {props.tag.human_readable()}
-        </div>
-    )
+
+    if props.interactive {
+        html!(
+            <div class={text_classes} {onclick}>
+                {props.tag.human_readable()}
+            </div>
+        )
+    } else {
+        html!(
+            <div class={text_classes}>
+                {props.tag.human_readable()}
+            </div>
+        )
+    }
+}
+
+#[derive(Properties, Clone, PartialEq, Eq)]
+pub struct TagSelectionProps {
+    pub tags: Tags,
 }
 
 #[function_component(TagPreferenceSelection)]
-pub fn tag_selection() -> Html {
-    let tags_state = use_state(|| {
-        let mut tags = Tags::new();
-        tags.define_tag("gender:male");
-        tags.define_tag("gender:female");
-        tags.define_tag("sexuality:lgbt");
-        tags
-    });
-
+pub fn tag_selection(props: &TagSelectionProps) -> Html {
+    let tags_state = use_state(|| props.tags.clone());
     let gender_text_selection = t!("select-tags");
 
     html! {
-        <div class="container card is-max-tablet mt-2 p-3 is-shadowless">
-            <div class="block has-text-info is-size-3">
+        <div class="container card is-max-tablet mt-2 p-1 is-shadowless">
+            <div class="block is-info is-size-3 p-1">
                 {gender_text_selection}
             </div>
-            <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+            <div class="is-flex is-flex-direction-row is-flex-wrap-wrap p-2">
                 {
                     tags_state.get_all_tags().into_iter().map(|tag|
                         html!(
