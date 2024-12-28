@@ -93,8 +93,8 @@ pub fn locations_view(locations: &Locations) -> Html {
     )
 }
 
-#[function_component(App)]
-pub fn app() -> Html {
+#[function_component(LocationFinder)]
+pub fn location_finder() -> Html {
     let sample_locations = Locations::from(vec![
         Location {
             name: "OiK Gdańsk".to_string(),
@@ -113,6 +113,44 @@ pub fn app() -> Html {
             </div>
             <div class="container">
                 {locations_view(&sample_locations)}
+            </div>
+        </div>
+    }
+}
+
+#[function_component(App)]
+pub fn app() -> Html {
+    html! {
+        <div>
+            <div class="is-primary">
+                <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+                    <div class="navbar-brand">
+                        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                            <span aria-hidden="false"></span>
+                            <span aria-hidden="false"></span>
+                            <span aria-hidden="false"></span>
+                            <span aria-hidden="false"></span>
+                        </a>
+                    </div>
+                    <div class="navbar-menu">
+                        <div class="navbar-start">
+                            <div class="navbar-item">
+                                {"SHOB"}
+                            </div>
+                        </div>
+                        <div class="navbar-end">
+                            <a class="navbar-item">
+                                {t!("navbar:location-finder")}
+                            </a>
+                            <a class="navbar-item">
+                                {t!("navbar:about")}
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="container">
+                <LocationFinder/>
             </div>
         </div>
     }
