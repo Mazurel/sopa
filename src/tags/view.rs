@@ -36,10 +36,8 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
 
     match *tag_selection_state.clone() {
         Acceptable => {
-            classes.push("is-success".to_string());
+            classes.push("is-primary".to_string());
             classes.push("is-clickable".to_string());
-            classes.push("has-text-grey-darker".to_string());
-            classes.push("has-background-info-light".to_string());
             if let Some(selection_changed) = &props.selection_changed {
                 selection_changed.emit(Acceptable);
             }
@@ -55,7 +53,7 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     }
     classes.append(&mut vec![
         "tag".to_string(),
-        "is-size-8".to_string(),
+        "is-size-6".to_string(),
         "has-text-weight-semibold".to_string(),
         "has-text-centered".to_string(),
         "is-hoverable".to_string(),
