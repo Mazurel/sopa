@@ -1,1 +1,5 @@
-@import "https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css";
+// Load Bulma's base styles and themes (including the minireset)
+@use "bulma/sass" with (
+    $family-primary: '"Lato", sans-serif'
+);
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");

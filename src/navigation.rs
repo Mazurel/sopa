@@ -1,10 +1,11 @@
+use log::info;
 use std::borrow::Cow;
 
 use crate::routes::{about::AboutPage, location_finder::LocationFinder};
 
 use yew::prelude::*;
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Route {
     LocationFinder,
     About,
@@ -80,6 +81,7 @@ pub fn navbar(props: &NavigationBarProps) -> Html {
     let selected_route = use_state_eq(|| Route::LocationFinder);
     let selected_route_clone = selected_route.clone();
     let on_route_selection_changed = Callback::from(move |route: Route| {
+        info!("New navigation route: {route:?}");
         selected_route_clone.set(route);
     });
 

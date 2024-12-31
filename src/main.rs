@@ -1,3 +1,5 @@
+use app::App;
+
 mod app;
 mod navigation;
 mod routes;
@@ -8,9 +10,8 @@ extern crate rust_i18n;
 // Init rust-i18n, refer to lib readme
 i18n!("locales");
 
-use app::App;
-
 fn main() {
+    wasm_logger::init(wasm_logger::Config::default());
     rust_i18n::set_locale("pl");
     yew::Renderer::<App>::new().render();
 }
