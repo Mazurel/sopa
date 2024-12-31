@@ -1,5 +1,6 @@
 mod app;
-mod tags;
+mod navigation;
+mod routes;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]
