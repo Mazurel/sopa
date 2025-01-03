@@ -3,20 +3,26 @@ mod tags;
 use tags::{SelectableTag, TagPreferenceSelection, TagSelectionType, Tags};
 use yew::prelude::*;
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct Location {
     name: String,
     tags: Tags,
 }
 
-#[derive(Clone)]
-struct Locations {
-    locations: Vec<Location>,
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Locations {
+    pub locations: Vec<Location>,
 }
 
 impl From<Vec<Location>> for Locations {
     fn from(value: Vec<Location>) -> Self {
         Locations { locations: value }
+    }
+}
+
+impl Into<Vec<Location>> for Locations {
+    fn into(self) -> Vec<Location> {
+        self.locations
     }
 }
 
@@ -34,13 +40,31 @@ impl Locations {
     pub fn all_locations<'a>(&'a self) -> &'a Vec<Location> {
         &self.locations
     }
-}
 
-fn preference_selection(tags: Tags) -> Html {
-    html! {
-        <div class="container box is-max-desktop mt-2">
-            <TagPreferenceSelection {tags}/>
-        </div>
+    pub fn all_locations_in_order(&self, tags_preference: &Tags) -> Vec<Location> {
+        let mut locations = self.locations.clone();
+        let mut locations_overlaps: Vec<_> = self
+            .locations
+            .clone()
+            .into_iter()
+            .map(|loc| loc.tags.overlap(tags_preference))
+            .collect();
+
+        let mut locations_result = Vec::new();
+
+        while locations.len() > 0 {
+            let i = locations_overlaps
+                .iter()
+                .enumerate()
+                .min_by(|(_, o1), (_, o2)| o2.total_cmp(o1))
+                .expect("Locations should not be empty due to loop condition.")
+                .0;
+
+            locations_overlaps.remove(i);
+            locations_result.push(locations.remove(i));
+        }
+
+        locations_result
     }
 }
 
@@ -108,13 +132,30 @@ pub fn location_finder() -> Html {
         },
     ]);
 
+    let locations_state = use_state(|| sample_locations.clone());
+
+    let on_tag_preference_changed = {
+        let locations_state = locations_state.clone();
+        use_callback(
+            move |tag_preference: Tags, _| {
+                let new_locations = locations_state
+                    .all_locations_in_order(&tag_preference)
+                    .into();
+                locations_state.set(new_locations);
+            },
+            (),
+        )
+    };
+
+    log::info!("locs: {locations_state:?}");
+
     html! {
         <div class="container">
             <div class="container">
-                {preference_selection(sample_locations.build_tags())}
+                <TagPreferenceSelection tags={sample_locations.build_tags()} {on_tag_preference_changed}/>
             </div>
             <div class="container">
-                {locations_view(&sample_locations)}
+                {locations_view(&locations_state)}
             </div>
         </div>
     }

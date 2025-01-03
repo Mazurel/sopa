@@ -100,7 +100,7 @@ pub fn navbar(props: &NavigationBarProps) -> Html {
 
     html!(
         <div class="">
-            <nav class="navbar is-info" role="navigation" aria-label="main navigation">
+            <nav class="navbar is-info mb-6" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                         <span aria-hidden="false"></span>

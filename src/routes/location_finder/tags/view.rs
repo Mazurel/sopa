@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use yew::prelude::*;
 
 use super::data::{Tag, Tags};
@@ -14,7 +16,7 @@ pub struct SelectableTagProps {
     pub selection_type: TagSelectionType,
     #[prop_or(true)]
     pub interactive: bool,
-    selection_changed: Option<Callback<TagSelectionType>>,
+    selection_changed: Option<Callback<(Tag, TagSelectionType)>>,
 }
 
 #[function_component(SelectableTag)]
@@ -39,7 +41,7 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
             classes.push("is-primary".to_string());
             classes.push("is-clickable".to_string());
             if let Some(selection_changed) = &props.selection_changed {
-                selection_changed.emit(Acceptable);
+                selection_changed.emit((props.tag.clone(), Acceptable));
             }
         }
         NonAcceptable => {
@@ -47,7 +49,7 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
             classes.push("is-clickable".to_string());
             classes.push("has-background-danger-light".to_string());
             if let Some(selection_changed) = &props.selection_changed {
-                selection_changed.emit(NonAcceptable);
+                selection_changed.emit((props.tag.clone(), NonAcceptable));
             }
         }
     }
@@ -79,15 +81,51 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     }
 }
 
-#[derive(Properties, Clone, PartialEq, Eq)]
+pub type TagPreference = Tags;
+
+#[derive(Properties, Clone, PartialEq)]
 pub struct TagSelectionProps {
     pub tags: Tags,
+    pub on_tag_preference_changed: Callback<TagPreference>,
 }
 
 #[function_component(TagPreferenceSelection)]
 pub fn tag_selection(props: &TagSelectionProps) -> Html {
-    let tags_state = use_state(|| props.tags.clone());
+    let selected_tags_state = use_state_eq(|| Tags::new());
     let gender_text_selection = t!("select-tags");
+
+    let locations = props
+        .tags
+        .get_all_tags()
+        .into_iter()
+        .map(|tag| {
+            let selected_tags_state = selected_tags_state.clone();
+            let cb = move |(tag, state): (Tag, TagSelectionType)| {
+                use TagSelectionType::*;
+                match state {
+                    Acceptable => {
+                        let new_tags = selected_tags_state.with_tag(tag.to_string());
+                        selected_tags_state.set(new_tags);
+                    }
+                    NonAcceptable => {
+                        let new_tags = selected_tags_state.without_tag(tag.to_string());
+                        selected_tags_state.set(new_tags);
+                    }
+                }
+            };
+            html!(
+                <SelectableTag
+                    tag={tag.clone()}
+                    selection_type={TagSelectionType::NonAcceptable}
+                    selection_changed={cb}
+                />
+            )
+        })
+        .collect::<Vec<Html>>();
+
+    props
+        .on_tag_preference_changed
+        .emit((*selected_tags_state).clone());
 
     html! {
         <div class="container card is-max-tablet mt-2 p-1 is-shadowless">
@@ -95,17 +133,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
                 {gender_text_selection}
             </div>
             <div class="is-flex is-flex-direction-row is-flex-wrap-wrap p-2">
-                {
-                    tags_state.get_all_tags().into_iter().map(|tag|
-                        html!(
-                            <SelectableTag
-                                tag={tag.clone()}
-                                selection_type={TagSelectionType::NonAcceptable}
-                                selection_changed={Callback::from(|_| {})}
-                            />
-                        )
-                    ).collect::<Vec<Html>>()
-                }
+                {locations}
             </div>
         </div>
     }

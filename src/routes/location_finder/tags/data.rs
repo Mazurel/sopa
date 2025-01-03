@@ -1,12 +1,9 @@
 use rust_i18n::t;
-use std::collections::HashMap;
+use std::{collections::HashSet, hash::Hash, str::FromStr};
 
-pub type TagId = String;
-
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Tag {
     pub name: String,
-    pub description: String,
 }
 
 impl Tag {
@@ -21,50 +18,100 @@ impl Tag {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+impl FromStr for Tag {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Tag {
+            name: String::from(s),
+        })
+    }
+}
+
+impl ToString for Tag {
+    fn to_string(&self) -> String {
+        self.name.clone()
+    }
+}
+
+impl Hash for Tag {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        state.write(self.name.as_bytes());
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Tags {
-    tags: HashMap<TagId, Tag>,
+    tags: HashSet<Tag>,
 }
 
 impl Tags {
     pub fn new() -> Self {
         Tags {
-            tags: HashMap::new(),
+            tags: HashSet::new(),
         }
     }
 
     pub fn new_tags<It: IntoIterator<Item = Str>, Str: ToString>(items: It) -> Self {
         let mut tags = Self::new();
         for item in items {
-            tags.define_tag(item);
+            tags.define_tag(item.to_string());
         }
         tags
     }
 
     pub fn get_all_tags(&self) -> Vec<&Tag> {
-        self.tags.values().collect()
+        self.tags.iter().collect()
     }
 
-    pub fn get_tag(&self, tag_id: TagId) -> Option<&Tag> {
-        self.tags.get(&tag_id)
-    }
-
-    pub fn define_tag<Str: ToString>(&mut self, tag_name: Str) -> Option<TagId> {
-        let tag_id = tag_name.to_string();
+    pub fn define_tag<Str: ToString>(&mut self, tag: Str) -> Tag {
+        let tag_id = tag.to_string();
         let tag = Tag {
-            name: tag_name.to_string(),
-            description: String::from(""),
+            name: tag_id.to_string(),
         };
-        let insert_ok = self.tags.insert(tag_id.clone(), tag).is_none();
-
-        match insert_ok {
-            true => Some(tag_id),
-            false => None,
-        }
+        self.tags.insert(tag.clone().into());
+        tag
     }
 
-    pub fn has_tag(&self, tag_id: &TagId) -> bool {
-        self.tags.contains_key(tag_id)
+    pub fn undefine_tag<Str: ToString>(&mut self, tag: Str) -> Tag {
+        let tag_id = tag.to_string();
+        let tag = Tag {
+            name: tag_id.to_string(),
+        };
+        self.tags.remove(&tag);
+        tag
+    }
+
+    pub fn with_tag<S: ToString>(&self, tag: S) -> Self {
+        let mut tags = self.clone();
+        tags.define_tag(tag);
+        tags
+    }
+
+    pub fn without_tag<S: ToString>(&self, tag: S) -> Self {
+        let mut tags = self.clone();
+        tags.undefine_tag(tag);
+        tags
+    }
+
+    pub fn has_tag(&self, tag: &Tag) -> bool {
+        self.tags.contains(tag)
+    }
+
+    pub fn overlap(&self, other: &Tags) -> f32 {
+        let other_tags = other.get_all_tags();
+        let other_tags_amount = other_tags.len();
+
+        let overlap: f32 = other_tags
+            .into_iter()
+            .map(|t| match self.has_tag(t) {
+                true => 1.0,
+                false => 0.0,
+            })
+            .sum::<f32>()
+            / other_tags_amount as f32;
+
+        overlap.min(1.0).max(0.0)
     }
 }
 
@@ -75,21 +122,14 @@ mod tests {
     #[test]
     fn creating_tags() {
         let mut tags = Tags::new();
-        let tag_id = tags
-            .define_tag("Test".to_string())
-            .expect("Tag insertion should be succesfull");
-
-        let tag = tags
-            .get_tag(tag_id)
-            .expect("This tag should have been just inserted");
-        assert_eq!(tag.name, "Test");
+        let tag = tags.define_tag("Test");
+        assert!(tags.has_tag(&tag));
 
         for tag_name in (["Tag 1", "Tag 2", "Hello World"])
             .into_iter()
             .map(|t| t.to_string())
         {
-            tags.define_tag(tag_name)
-                .expect("Tag {tag_name} should have been sucesffuly inserted");
+            tags.define_tag(tag_name);
         }
 
         assert_eq!(tags.get_all_tags().len(), 4);
