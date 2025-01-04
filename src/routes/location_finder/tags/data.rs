@@ -13,6 +13,8 @@ impl Tag {
             "gender:female" => t!("gender:female"),
             "sexuality:lgbt" => t!("sexuality:lgbt"),
             "type:hostel" => t!("type:hostel"),
+            "age:adult" => t!("age:adult"),
+            "age:kid" => t!("age:kid"),
             _ => std::borrow::Cow::Owned(self.name.clone()),
         }
     }

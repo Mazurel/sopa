@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::navigation::{NavigationBar, NavigationBarProps};
+use crate::navigation::NavigationBar;
 
 #[function_component(App)]
 pub fn app() -> Html {

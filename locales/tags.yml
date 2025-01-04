@@ -17,3 +17,9 @@ sexuality:lgbt:
 type:hostel:
   en: "Hostel"
   pl: "Hostel"
+age:adult:
+  en: "Adult"
+  pl: "Dorośli"
+age:kid:
+  en: "Kid"
+  pl: "Dzieci"

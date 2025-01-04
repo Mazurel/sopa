@@ -28,14 +28,18 @@ fn locations_view(props: &LocationsViewProps) -> Html {
 
 #[function_component(LocationFinder)]
 pub fn location_finder() -> Html {
-    let sample_locations = Locations::from(vec![
+    let mut sample_locations = Locations::from(vec![
         Location {
             name: "OiK Gdańsk".to_string(),
-            tags: Tags::new_tags(["gender:male", "gender:female"]),
+            tags: Tags::new_tags(["gender:male", "gender:female", "age:adult"]),
         },
         Location {
             name: "OiK Gdańsk - Hostel".to_string(),
-            tags: Tags::new_tags(["gender:male", "gender:female", "type:hostel"]),
+            tags: Tags::new_tags(["gender:male", "gender:female", "type:hostel", "age:adult"]),
+        },
+        Location {
+            name: "OiK Gdynia".to_string(),
+            tags: Tags::new_tags(["gender:male", "gender:female", "age:adult", "age:kid"]),
         },
     ]);
 
