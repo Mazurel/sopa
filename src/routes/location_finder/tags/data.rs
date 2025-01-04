@@ -134,4 +134,14 @@ mod tests {
 
         assert_eq!(tags.get_all_tags().len(), 4);
     }
+
+    #[test]
+    fn modyfing_tags() {
+        let mut tags = Tags::new();
+        let tag = tags.define_tag("Test");
+        assert!(tags.has_tag(&tag.clone()));
+
+        tags.undefine_tag("Test");
+        assert!(!tags.has_tag(&tag.clone()));
+    }
 }

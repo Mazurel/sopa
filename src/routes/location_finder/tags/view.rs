@@ -1,10 +1,8 @@
-use std::borrow::BorrowMut;
-
 use yew::prelude::*;
 
 use super::data::{Tag, Tags};
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TagSelectionType {
     Acceptable,
     NonAcceptable,
@@ -16,14 +14,14 @@ pub struct SelectableTagProps {
     pub selection_type: TagSelectionType,
     #[prop_or(true)]
     pub interactive: bool,
-    selection_changed: Option<Callback<(Tag, TagSelectionType)>>,
+    pub selection_changed: Option<Callback<(Tag, TagSelectionType)>>,
 }
 
 #[function_component(SelectableTag)]
 pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     use TagSelectionType::*;
 
-    let tag_selection_state = use_state(|| props.selection_type);
+    let tag_selection_state = use_state_eq(|| props.selection_type);
 
     let tag_selection_state_clone = tag_selection_state.clone();
     let onclick = Callback::from(move |_| {
@@ -35,8 +33,18 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     });
 
     let mut classes = Vec::new();
+    let tag_name = props.tag.to_string();
 
-    match *tag_selection_state.clone() {
+    // When interactive mode is not use, always use property value!
+    let tag_selection = {
+        if props.interactive {
+            *tag_selection_state.clone()
+        } else {
+            props.selection_type.clone()
+        }
+    };
+
+    match tag_selection {
         Acceptable => {
             classes.push("is-primary".to_string());
             classes.push("is-clickable".to_string());
@@ -64,21 +72,18 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
         "is-unselectable".to_string(),
     ]);
 
-    let text_classes = classes.join(" ").to_string();
-
-    if props.interactive {
-        html!(
-            <div class={text_classes} {onclick}>
+    html!(
+        if props.interactive {
+            <div class={classes!(classes)} {onclick}>
                 {props.tag.human_readable()}
             </div>
-        )
-    } else {
-        html!(
-            <div class={text_classes}>
+        }
+        else {
+            <div class={classes!(classes)}>
                 {props.tag.human_readable()}
             </div>
-        )
-    }
+        }
+    )
 }
 
 pub type TagPreference = Tags;
