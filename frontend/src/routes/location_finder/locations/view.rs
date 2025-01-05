@@ -1,5 +1,5 @@
 use super::data::*;
-use crate::routes::location_finder::tags::{SelectableTag, TagSelectionType, Tags};
+use crate::components::tags::{TagSelectionType, TagView, Tags};
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq, Eq)]
@@ -22,7 +22,7 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                 true => TagSelectionType::Acceptable,
             };
 
-            html!(<SelectableTag
+            html!(<TagView
                 tag={(*t).clone()}
                 interactive={false}
                 {selection_type}

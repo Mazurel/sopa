@@ -1,3 +1,6 @@
 [submodule "bulma"]
 	path = bulma
 	url = git@github.com:jgthms/bulma.git
+[submodule "third_party/bulma"]
+	path = third_party/bulma
+	url = https://github.com/jgthms/bulma.git

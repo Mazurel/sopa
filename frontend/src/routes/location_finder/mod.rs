@@ -1,9 +1,8 @@
-use crate::routes::location_finder::tags::{TagPreferenceSelection, Tags};
+use crate::components::tags::{TagPreferenceSelection, Tags};
 use locations::{Location, LocationView, Locations};
 use yew::prelude::*;
 
 mod locations;
-mod tags;
 
 #[derive(Properties, PartialEq, Eq)]
 struct LocationsViewProps {

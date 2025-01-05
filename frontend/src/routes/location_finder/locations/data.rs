@@ -1,12 +1,13 @@
-use crate::routes::location_finder::tags::Tags;
+use crate::components::tags::Tags;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Location {
     pub name: String,
     pub tags: Tags,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Locations {
     pub locations: Vec<Location>,
 }
@@ -62,5 +63,9 @@ impl Locations {
         }
 
         locations_result
+    }
+
+    pub fn to_bin_data(&self) -> Vec<u8> {
+        bson::to_vec(self).unwrap()
     }
 }

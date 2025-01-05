@@ -17,7 +17,7 @@ pub struct SelectableTagProps {
     pub selection_changed: Option<Callback<(Tag, TagSelectionType)>>,
 }
 
-#[function_component(SelectableTag)]
+#[function_component(TagView)]
 pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     use TagSelectionType::*;
 
@@ -33,7 +33,6 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     });
 
     let mut classes = Vec::new();
-    let tag_name = props.tag.to_string();
 
     // When interactive mode is not use, always use property value!
     let tag_selection = {
@@ -47,17 +46,21 @@ pub fn selectable_tag(props: &SelectableTagProps) -> Html {
     match tag_selection {
         Acceptable => {
             classes.push("is-primary".to_string());
-            classes.push("is-clickable".to_string());
-            if let Some(selection_changed) = &props.selection_changed {
-                selection_changed.emit((props.tag.clone(), Acceptable));
+            if props.interactive {
+                classes.push("is-clickable".to_string());
+                if let Some(selection_changed) = &props.selection_changed {
+                    selection_changed.emit((props.tag.clone(), Acceptable));
+                }
             }
         }
         NonAcceptable => {
             classes.push("is-danger".to_string());
-            classes.push("is-clickable".to_string());
             classes.push("has-background-danger-light".to_string());
-            if let Some(selection_changed) = &props.selection_changed {
-                selection_changed.emit((props.tag.clone(), NonAcceptable));
+            if props.interactive {
+                classes.push("is-clickable".to_string());
+                if let Some(selection_changed) = &props.selection_changed {
+                    selection_changed.emit((props.tag.clone(), NonAcceptable));
+                }
             }
         }
     }
@@ -97,9 +100,9 @@ pub struct TagSelectionProps {
 #[function_component(TagPreferenceSelection)]
 pub fn tag_selection(props: &TagSelectionProps) -> Html {
     let selected_tags_state = use_state_eq(|| Tags::new());
-    let gender_text_selection = t!("select-tags");
+    let tag_selection = t!("select-tags");
 
-    let locations = props
+    let interactive_tags = props
         .tags
         .get_all_tags()
         .into_iter()
@@ -119,7 +122,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
                 }
             };
             html!(
-                <SelectableTag
+                <TagView
                     tag={tag.clone()}
                     selection_type={TagSelectionType::NonAcceptable}
                     selection_changed={cb}
@@ -135,10 +138,10 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
     html! {
         <div class="container card is-max-tablet mt-2 p-1 is-shadowless">
             <div class="block is-info is-size-3 p-1">
-                {gender_text_selection}
+                {tag_selection}
             </div>
             <div class="is-flex is-flex-direction-row is-flex-wrap-wrap p-2">
-                {locations}
+                {interactive_tags}
             </div>
         </div>
     }

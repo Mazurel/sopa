@@ -1,24 +1,52 @@
 use rust_i18n::t;
+use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, hash::Hash, str::FromStr};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Tag {
     pub name: String,
 }
 
-impl Tag {
-    pub fn human_readable(&self) -> std::borrow::Cow<'_, str> {
-        match self.name.as_str() {
-            "gender:male" => t!("gender:male"),
-            "gender:female" => t!("gender:female"),
-            "sexuality:lgbt" => t!("sexuality:lgbt"),
-            "type:hostel" => t!("type:hostel"),
-            "age:adult" => t!("age:adult"),
-            "age:kid" => t!("age:kid"),
-            _ => std::borrow::Cow::Owned(self.name.clone()),
-        }
-    }
+#[macro_export]
+macro_rules! count_args {
+    // Match one or more arguments
+    ($first:expr $(, $rest:expr)*) => {
+        // Count the first argument and recursively count the rest
+        1 + count_args!($($rest),*)
+    };
+    // Base case: no arguments
+    () => {
+        0
+    };
 }
+
+#[macro_export]
+macro_rules! define_tags {
+    ($($tag:literal),*) => {
+        pub static ALL_DEFINED_TOKENS: [&'static str; count_args!($($tag),*)] = [
+            $($tag),*
+        ];
+
+        impl Tag {
+            pub fn human_readable(&self) -> std::borrow::Cow<'_, str> {
+                match self.name.as_str() {
+                    $($tag => t!($tag),)*
+                    _ => std::borrow::Cow::Owned(self.name.clone()),
+                }
+            }
+        }
+    };
+}
+
+define_tags!(
+    "gender:male",
+    "gender:female",
+    "sexuality:lgbt",
+    "type:hostel",
+    "age:adult",
+    "age:kid",
+    "contact:phone"
+);
 
 impl FromStr for Tag {
     type Err = ();
@@ -42,7 +70,7 @@ impl Hash for Tag {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Tags {
     tags: HashSet<Tag>,
 }

@@ -19,6 +19,7 @@ along with this program; if not, see
 use app::App;
 
 mod app;
+mod components;
 mod navigation;
 mod routes;
 
