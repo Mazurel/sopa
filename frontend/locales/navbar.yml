@@ -5,3 +5,6 @@ navbar:about:
 navbar:location-finder:
   en: Location Finder
   pl: Szukaj Placówek
+navbar:location-definer:
+  en: Define Location
+  pl: Zdefiniuj Placówkę

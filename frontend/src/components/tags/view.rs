@@ -11,6 +11,7 @@ pub enum TagSelectionType {
 #[derive(Properties, PartialEq)]
 pub struct SelectableTagProps {
     pub tag: Tag,
+    #[prop_or(TagSelectionType::Acceptable)]
     pub selection_type: TagSelectionType,
     #[prop_or(true)]
     pub interactive: bool,

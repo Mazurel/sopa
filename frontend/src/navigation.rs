@@ -1,13 +1,16 @@
 use log::info;
 use std::borrow::Cow;
 
-use crate::routes::{about::AboutPage, location_finder::LocationFinder};
+use crate::routes::{
+    about::AboutPage, location_definer::LocationDefiner, location_finder::LocationFinder,
+};
 
 use yew::prelude::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Route {
     LocationFinder,
+    LocationDefiner,
     About,
 }
 
@@ -15,6 +18,7 @@ impl Route {
     fn into_route_name(&self) -> Cow<'static, str> {
         match self {
             Route::About => t!("navbar:about"),
+            Route::LocationDefiner => t!("navbar:location-definer"),
             Route::LocationFinder => t!("navbar:location-finder"),
         }
     }
@@ -23,11 +27,12 @@ impl Route {
         match self {
             Route::LocationFinder => html!(<LocationFinder/>),
             Route::About => html!(<AboutPage/>),
+            Route::LocationDefiner => html!(<LocationDefiner/>),
         }
     }
 }
 
-static ALL_ROUTES: [Route; 2] = [Route::LocationFinder, Route::About];
+static ALL_ROUTES: [Route; 3] = [Route::LocationFinder, Route::LocationDefiner, Route::About];
 
 #[derive(Properties, PartialEq)]
 struct NavigationEntryProps {
@@ -41,11 +46,7 @@ struct NavigationEntryProps {
 fn naventry(props: &NavigationEntryProps) -> Html {
     let entry_clicked = use_state(|| false);
 
-    let route_name = match &props.route {
-        Route::About => t!("navbar:about"),
-        Route::LocationFinder => t!("navbar:location-finder"),
-    };
-
+    let route_name = props.route.into_route_name();
     let entry_clicked_for_cb = entry_clicked.clone();
     let onclick = Callback::from(move |_| {
         entry_clicked_for_cb.set(true);

@@ -23,3 +23,6 @@ age:adult:
 age:kid:
   en: "Kid"
   pl: "Dzieci"
+contact:phone:
+  en: "Support hotline"
+  pl: "Telefon wsparcia"

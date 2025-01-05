@@ -23,7 +23,7 @@ macro_rules! count_args {
 #[macro_export]
 macro_rules! define_tags {
     ($($tag:literal),*) => {
-        pub static ALL_DEFINED_TOKENS: [&'static str; count_args!($($tag),*)] = [
+        static ALL_DEFINED_TAGS: [&'static str; count_args!($($tag),*)] = [
             $($tag),*
         ];
 
@@ -47,6 +47,15 @@ define_tags!(
     "age:kid",
     "contact:phone"
 );
+
+pub fn get_all_supported_tags() -> Vec<Tag> {
+    ALL_DEFINED_TAGS
+        .iter()
+        .map(|tag_name| Tag {
+            name: tag_name.to_string(),
+        })
+        .collect()
+}
 
 impl FromStr for Tag {
     type Err = ();
