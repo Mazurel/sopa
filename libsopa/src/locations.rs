@@ -1,4 +1,4 @@
-use crate::components::tags::Tags;
+use crate::tags::Tags;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]

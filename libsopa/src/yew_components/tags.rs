@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use super::data::{Tag, Tags};
+use crate::tags::{Tag, Tags};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TagSelectionType {
@@ -9,17 +9,18 @@ pub enum TagSelectionType {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct SelectableTagProps {
+pub struct TagViewProps {
     pub tag: Tag,
     #[prop_or(TagSelectionType::Acceptable)]
     pub selection_type: TagSelectionType,
     #[prop_or(true)]
     pub interactive: bool,
+    #[prop_or(None)]
     pub selection_changed: Option<Callback<(Tag, TagSelectionType)>>,
 }
 
 #[function_component(TagView)]
-pub fn selectable_tag(props: &SelectableTagProps) -> Html {
+pub fn selectable_tag(props: &TagViewProps) -> Html {
     use TagSelectionType::*;
 
     let tag_selection_state = use_state_eq(|| props.selection_type);

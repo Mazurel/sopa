@@ -1,8 +1,7 @@
-use crate::components::tags::{TagPreferenceSelection, Tags};
-use locations::{Location, LocationView, Locations};
+use libsopa::locations::{Location, Locations};
+use libsopa::tags::Tags;
+use libsopa::yew_components::{LocationView, TagPreferenceSelection};
 use yew::prelude::*;
-
-mod locations;
 
 #[derive(Properties, PartialEq, Eq)]
 struct LocationsViewProps {
@@ -48,16 +47,13 @@ pub fn location_finder() -> Html {
     let on_tag_preference_changed = {
         let locations_state = locations_state.clone();
         let tag_preference_state = tag_preference_state.clone();
-        use_callback(
-            move |tag_preference: Tags, _| {
-                let new_locations = locations_state
-                    .all_locations_in_order(&tag_preference)
-                    .into();
-                locations_state.set(new_locations);
-                tag_preference_state.set(tag_preference);
-            },
-            (),
-        )
+        use_callback((), move |tag_preference: Tags, _| {
+            let new_locations = locations_state
+                .all_locations_in_order(&tag_preference)
+                .into();
+            locations_state.set(new_locations);
+            tag_preference_state.set(tag_preference);
+        })
     };
 
     html! {

@@ -1,0 +1,15 @@
+[package]
+name = "libsopa"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bson = "2.13.0"
+rust-i18n = "3.1.2"
+serde = { version = "1.0.217", features = ["derive", "serde_derive"] }
+yew = "0.21.0"
+
+[package.metadata.i18n]
+available-locales = ["en", "pl"]
+default-locale = "en"
+load-path = "../locales"

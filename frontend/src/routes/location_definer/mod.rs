@@ -1,4 +1,5 @@
-use crate::components::tags::{get_all_supported_tags, TagView};
+use libsopa::tags::get_all_supported_tags;
+use libsopa::yew_components::TagView;
 use yew::prelude::*;
 
 #[function_component(LocationDefiner)]

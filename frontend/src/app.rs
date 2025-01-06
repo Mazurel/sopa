@@ -14,7 +14,7 @@ pub fn app() -> Html {
     let view_content_clone = view_content.clone();
     t!("");
     let on_view_content_update =
-        use_callback(move |html: Html, _| view_content_clone.set(html), ());
+        use_callback((), move |html: Html, _| view_content_clone.set(html));
 
     html! {
         <div>

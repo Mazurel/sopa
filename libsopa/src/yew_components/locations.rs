@@ -1,5 +1,6 @@
-use super::data::*;
-use crate::components::tags::{TagSelectionType, TagView, Tags};
+use crate::locations::Location;
+use crate::tags::Tags;
+use crate::yew_components::{TagSelectionType, TagView};
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq, Eq)]

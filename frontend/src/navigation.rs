@@ -65,7 +65,7 @@ fn naventry(props: &NavigationEntryProps) -> Html {
         )
     } else {
         html!(
-            <a class="navbar-item is-primary" {onclick}>
+            <a class="navbar-item is-primary has-text-weight-normal" {onclick}>
                 {route_name}
             </a>
         )

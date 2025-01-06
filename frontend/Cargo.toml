@@ -16,11 +16,12 @@ serde = { version = "1.0.217", features = ["std", "derive", "serde_derive"] }
 bson = "2.13.0"
 wasm-logger = "0.2.0"
 web-sys = "0.3.76"
-yew = { version = "0.20", features = ["csr"] }
+yew = { version = "0.21.0", features = ["csr"] }
 # NOTE: Random by default doesn't support browser JS
 getrandom = { version = "*", features = ["js"] }
+libsopa = { path = "../libsopa" }
 
 [package.metadata.i18n]
 available-locales = ["en", "pl"]
 default-locale = "en"
-load-path = "locales"
+load-path = "../locales"
