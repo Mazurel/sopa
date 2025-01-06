@@ -112,8 +112,8 @@ pub fn navbar(props: &NavigationBarProps) -> Html {
                 </div>
                 <div class="navbar-menu">
                     <div class="navbar-start">
-                        <div class="navbar-item is-size-4">
-                            {"Sopa"}
+                        <div class="navbar-item is-size-3 is-logo-font">
+                            {"SOPa"}
                         </div>
                     </div>
                     <div class="navbar-end">
