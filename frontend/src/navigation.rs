@@ -57,19 +57,18 @@ fn naventry(props: &NavigationEntryProps) -> Html {
         entry_clicked.set(false);
     }
 
-    if props.is_selected {
-        html!(
+    html!(
+        if props.is_selected {
             <a class="navbar-item has-text-weight-semibold" {onclick}>
                 {route_name}
             </a>
-        )
-    } else {
-        html!(
+        }
+        else {
             <a class="navbar-item is-primary has-text-weight-normal" {onclick}>
                 {route_name}
             </a>
-        )
-    }
+        }
+    )
 }
 
 #[derive(Properties, PartialEq)]
