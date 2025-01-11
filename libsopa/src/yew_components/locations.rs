@@ -6,19 +6,16 @@ use yew::prelude::*;
 #[derive(Properties, Clone, PartialEq, Eq)]
 pub struct LocationViewProps {
     pub location: Location,
-    pub selected_tags: Tags,
+    #[prop_or(None)]
+    pub global_selected_tags: Option<Tags>,
 }
 
-#[function_component(LocationView)]
-pub fn location_view(props: &LocationViewProps) -> Html {
-    let location = &props.location;
-
-    let tag_elements = location
-        .tags
+fn get_matching_tags(all_tags: &Tags, my_tags: &Tags) -> Vec<Html> {
+    my_tags
         .get_all_tags()
         .iter()
         .map(|t| {
-            let selection_type = match props.selected_tags.has_tag(*t) {
+            let selection_type = match all_tags.has_tag(*t) {
                 false => TagSelectionType::NonAcceptable,
                 true => TagSelectionType::Acceptable,
             };
@@ -29,7 +26,17 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                 {selection_type}
             />)
         })
-        .collect::<Vec<_>>();
+        .collect::<Vec<_>>()
+}
+
+#[function_component(LocationView)]
+pub fn location_view(props: &LocationViewProps) -> Html {
+    let location = &props.location;
+
+    let tag_elements = match &props.global_selected_tags {
+        None => None,
+        Some(selected_tags) => Some(get_matching_tags(selected_tags, &props.location.tags)),
+    };
 
     html!(
         <div class="component is-max-tablet p-5">
@@ -39,14 +46,16 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                         {location.name.clone()}
                     </div>
                 </div>
-                <div class="card-content">
-                    <div class="component">
-                        {t!("location-tags-info").to_string()}
+                if let Some(tag_elements) = tag_elements {
+                    <div class="card-content">
+                        <div class="component">
+                            {t!("location-tags-info").to_string()}
+                        </div>
+                        <div class="component">
+                            {tag_elements}
+                        </div>
                     </div>
-                    <div class="component">
-                        {tag_elements}
-                    </div>
-                </div>
+                }
             </div>
         </div>
     )

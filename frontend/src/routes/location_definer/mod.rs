@@ -1,15 +1,33 @@
 use libsopa::tags::get_all_supported_tags;
+use libsopa::yew_components::LocationView;
 use libsopa::yew_components::TagView;
 use yew::prelude::*;
 
+use crate::app::SharedAppState;
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct LocationDefinerProps {
+    pub app_state: SharedAppState<'static>,
+}
+
 #[function_component(LocationDefiner)]
-pub fn location_definer() -> Html {
+pub fn location_definer(props: &LocationDefinerProps) -> Html {
     let location_definer_prompt = t!("location-definer-prompt");
     let location_definer_title_label = t!("location-definer-title-label");
     let location_definer_title_placeholder = t!("location-definer-title-placeholder");
     let location_definer_address_label = t!("location-definer-address-label");
     let location_definer_address_placeholder = t!("location-definer-address-placeholder");
     let location_definer_tags_label = t!("location-definer-tags-label");
+
+    let all_locations_view: Vec<Html> = props
+        .app_state
+        .locations_db
+        .all_locations()
+        .locations_in_random_order()
+        .into_iter()
+        .map(|loc| html!(<LocationView location={(*loc).clone()}/>))
+        .collect();
+
     let all_tags_view: Vec<Html> = get_all_supported_tags()
         .into_iter()
         .map(|tag| html!(<TagView {tag} interactive={false}/>))
@@ -18,7 +36,7 @@ pub fn location_definer() -> Html {
     html!(
         <div class="columns">
             <div class="column is-one-third">
-                {"List of places will be here !"}
+                { all_locations_view }
             </div>
             <div class="column box is-two-thirds">
                 <div class="content">

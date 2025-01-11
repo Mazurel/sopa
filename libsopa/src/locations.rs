@@ -25,6 +25,10 @@ impl Into<Vec<Location>> for Locations {
 }
 
 impl Locations {
+    pub fn new() -> Self {
+        Self::from(vec![])
+    }
+
     pub fn build_tags(&self) -> Tags {
         let mut tags = Tags::new();
         for loc in self.locations.iter() {
@@ -35,7 +39,7 @@ impl Locations {
         tags
     }
 
-    pub fn all_locations<'a>(&'a self) -> &'a Vec<Location> {
+    pub fn locations_in_random_order<'a>(&'a self) -> &'a Vec<Location> {
         &self.locations
     }
 
@@ -67,5 +71,9 @@ impl Locations {
 
     pub fn to_bin_data(&self) -> Vec<u8> {
         bson::to_vec(self).unwrap()
+    }
+
+    pub fn push(&mut self, location: Location) {
+        self.locations.push(location);
     }
 }
