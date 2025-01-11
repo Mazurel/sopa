@@ -2,3 +2,30 @@ _version: 2
 location-definer-prompt:
   en: "Please define location"
   pl: "Zdefiniuj placówkę"
+location-definer-add-label:
+  en: "Add New Location"
+  pl: "Dodaj Nową Placówkę"
+location-definer-address-label:
+  en: "Address"
+  pl: "Adres"
+location-definer-address-placeholder:
+  en: "Type address here"
+  pl: "Wpisz tutaj adres"
+location-definer-tags-label:
+  en: "Tags"
+  pl: "Tagi"
+location-definer-title-label:
+  en: "Location name"
+  pl: "Nazwa placówki"
+location-definer-title-placeholder:
+  en: "Type name of the location here"
+  pl: "Wpisz tutaj nazwę placówki"
+location-definer-button-exit:
+  en: "Abort changes"
+  pl: "Porzuć zmiany"
+location-definer-button-reset:
+  en: "Clean changes"
+  pl: "Wyczyść zmiany"
+location-definer-button-save:
+  en: "Save changes"
+  pl: "Zapisz zmiany"

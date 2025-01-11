@@ -21,14 +21,17 @@ impl<'a> LocationsDatabase<'a> {
         db.insert_location(Location {
             name: "OiK Gdańsk".to_string(),
             tags: Tags::new_tags(["gender:male", "gender:female", "age:adult"]),
+            ..Default::default()
         });
         db.insert_location(Location {
             name: "OiK Gdańsk - Hostel".to_string(),
             tags: Tags::new_tags(["gender:male", "gender:female", "type:hostel", "age:adult"]),
+            ..Default::default()
         });
         db.insert_location(Location {
             name: "OiK Gdynia".to_string(),
             tags: Tags::new_tags(["gender:male", "gender:female", "age:adult", "age:kid"]),
+            ..Default::default()
         });
         db
     }

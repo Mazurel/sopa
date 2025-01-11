@@ -2,6 +2,7 @@
 @use "../third_party/bulma/sass" with (
     $family-primary: '"Red Hat Text", "Lato", sans-serif'
 );
+@use "../third_party/bulma/sass/utilities/mixins";
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Limelight&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap");
 
@@ -9,4 +10,15 @@
     font-family: "Limelight", serif;
     font-weight: 400;
     font-style: normal;
+}
+
+.is-pinned-to-right-bot {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+
+    @include mixins.touch {
+        right: 1rem;
+        bottom: 1rem;
+    }
 }
