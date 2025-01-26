@@ -23,7 +23,7 @@ use crate::navigation::NavigationBar;
 #[derive(Properties, Clone, PartialEq)]
 pub struct SharedAppState<'a> {
     pub locations_db: UseStateHandle<LocationsDatabase<'a>>,
-    locations_db_update_request: Callback<LocationsDatabase<'a>>,
+    pub locations_db_update_request: Callback<LocationsDatabase<'a>>,
 }
 
 impl<'a> SharedAppState<'a> {

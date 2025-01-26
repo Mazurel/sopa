@@ -102,7 +102,7 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
     html!(
         <>
             <div class="box is-rounded is-pinned-to-right-bot">
-                <button class="button is-rounded is-primary">
+                <button class="button is-rounded is-info">
                     { location_definer_add_label }
                 </button>
             </div>

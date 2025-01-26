@@ -33,7 +33,29 @@ define_tags!(
     "type:hostel",
     "age:adult",
     "age:kid",
-    "contact:phone"
+    "contact:phone",
+    "domestic abuse",
+    "homelessness crisis",
+    "disability",
+    "suicidal crisis",
+    "discrimination",
+    "law",
+    "social issues",
+    "sexual abuse",
+    "victims of crime",
+    "parenting",
+    "alcohol abuse",
+    "substance abuse",
+    "NFZ",
+    "NGO",
+    "griving",
+    "teenagers",
+    "financial issues",
+    "unemployment",
+    "couples",
+    "long-term therapy",
+    "mental illness",
+    "elderly"
 );
 
 pub fn get_all_supported_tags() -> Vec<Tag> {

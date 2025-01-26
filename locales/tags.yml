@@ -26,3 +26,69 @@ age:kid:
 contact:phone:
   en: "Support hotline"
   pl: "Telefon wsparcia"
+domestic abuse:
+  en: "domestic abuse"
+  pl: "przemoc domowa"
+homelessness crisis:
+  en: "homelessness crisis"
+  pl: "Kryzys Bezdomności"
+disability:
+  en: "Disability"
+  pl: "Niepełnosprawność"
+suicidal crisis:
+  en: "Suicidal Crisis"
+  pl: "Kryzys Suicydalny"
+discrimination:
+  en: "Discrimination"
+  pl: "Dyskryminacja"
+law:
+  en: "Law"
+  pl: "Pomoc Prawna"
+social issues:
+  en: "Social Issues"
+  pl: "Pomoc Społeczna"
+sexual abuse:
+  en: "Sexual ABuse"
+  pl: "Przemoc Seksualna"
+victims of crime:
+  en: "Victims of Crime"
+  pl: "Ofiary Przestępstw"
+parenting:
+  en: "Parenting"
+  pl: "Wsparcie Rodziców"
+alcohol abuse:
+  en: "Alcohol Abuse"
+  pl: "Alkoholizm"
+substance abuse:
+  en: "Sybstance Abuse"
+  pl: "Uzależnienie od SP"
+NFZ:
+  en: "NFZ"
+  pl: "NFZ"
+NGO:
+  en: "NGO"
+  pl: "Organizacje Pozarządowe"
+griving:
+  en: "Griving"
+  pl: "Żałoba"
+teenagers:
+  en: "Tennagers"
+  pl: "Nastolatki"
+financial issues:
+  en: "Financial Issues"
+  pl: "Pomoc Finansowa"
+unemployment:
+  en: "Unemployment"
+  pl: "Bezrobocie"
+couples:
+  en: "Couples"
+  pl: "Pary"
+long-term therapy:
+  en: "Long-term Therapy"
+  pl: "Terapia Długoterminowa"
+mental illness:
+  en: "Mental Illness"
+  pl: "Zdrowie Psychiczne"
+elderly:
+  en: "Elderly"
+  pl: "Seniorzy"

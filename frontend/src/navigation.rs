@@ -21,12 +21,14 @@ use std::borrow::Cow;
 use crate::app::SharedAppState;
 use crate::routes::{
     about::AboutPage, location_definer::LocationDefiner, location_finder::LocationFinder,
+    main_page::MainPage
 };
 
 use yew::prelude::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Route {
+    MainPage,
     LocationFinder,
     LocationDefiner,
     About,
@@ -38,6 +40,7 @@ impl Route {
             Route::About => t!("navbar:about"),
             Route::LocationDefiner => t!("navbar:location-definer"),
             Route::LocationFinder => t!("navbar:location-finder"),
+            Route::MainPage => t!("navbar:main-page"),
         }
     }
 
@@ -49,11 +52,12 @@ impl Route {
             Route::LocationFinder => html!(<LocationFinder {app_state}/>),
             Route::About => html!(<AboutPage/>),
             Route::LocationDefiner => html!(<LocationDefiner {app_state}/>),
+            Route::MainPage => html!(<MainPage/>),
         }
     }
 }
 
-static ALL_ROUTES: [Route; 3] = [Route::LocationFinder, Route::LocationDefiner, Route::About];
+static ALL_ROUTES: [Route; 4] = [Route::MainPage, Route::LocationFinder, Route::LocationDefiner, Route::About];
 
 #[derive(Properties, PartialEq)]
 struct NavigationEntryProps {
@@ -144,7 +148,7 @@ impl Component for NavigationBar {
                     </div>
                     <div class="navbar-menu">
                         <div class="navbar-start">
-                            <div class="navbar-item is-size-3 is-logo-font">
+                            <div class="navbar-item is-size-1 is-logo-font">
                                 {"SOPa"}
                             </div>
                         </div>

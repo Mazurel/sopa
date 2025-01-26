@@ -1,7 +1,7 @@
 _version: 2
 location-definer-prompt:
-  en: "Please define location"
-  pl: "Zdefiniuj placówkę"
+  en: "Please Define Location"
+  pl: "Edytuj Placówkę"
 location-definer-add-label:
   en: "Add New Location"
   pl: "Dodaj Nową Placówkę"
