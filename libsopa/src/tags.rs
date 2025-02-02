@@ -47,7 +47,7 @@ define_tags!(
     "alcohol abuse",
     "substance abuse",
     "NFZ",
-    "NGO",
+    "NGO", // Non-goverment
     "griving",
     "teenagers",
     "financial issues",
@@ -92,6 +92,12 @@ impl Hash for Tag {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Tags {
     tags: HashSet<Tag>,
+}
+
+impl From<Vec<Tag>> for Tags {
+    fn from(value: Vec<Tag>) -> Self {
+        Tags::new_tags(value)
+    }
 }
 
 impl Tags {

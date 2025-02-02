@@ -21,7 +21,7 @@ use std::borrow::Cow;
 use crate::app::SharedAppState;
 use crate::routes::{
     about::AboutPage, location_definer::LocationDefiner, location_finder::LocationFinder,
-    main_page::MainPage
+    main_page::MainPage,
 };
 
 use yew::prelude::*;
@@ -46,7 +46,7 @@ impl Route {
 
     // NOTE: We force static lifetime here, to simplify lifetime management
     //       in the componenets of the routes - it is always statically allocated.
-    fn into_html_view(&self, app_state: SharedAppState<'static>) -> Html {
+    fn into_html_view(&self, app_state: SharedAppState) -> Html {
         // TODO: Use shared app state in the routes
         match self {
             Route::LocationFinder => html!(<LocationFinder {app_state}/>),
@@ -57,7 +57,12 @@ impl Route {
     }
 }
 
-static ALL_ROUTES: [Route; 4] = [Route::MainPage, Route::LocationFinder, Route::LocationDefiner, Route::About];
+static ALL_ROUTES: [Route; 4] = [
+    Route::MainPage,
+    Route::LocationFinder,
+    Route::LocationDefiner,
+    Route::About,
+];
 
 #[derive(Properties, PartialEq)]
 struct NavigationEntryProps {
@@ -97,9 +102,9 @@ fn naventry(props: &NavigationEntryProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct NavigationBarProps<'a> {
+pub struct NavigationBarProps {
     pub on_view_content_update: Callback<Html>,
-    pub shared_app_state: SharedAppState<'a>,
+    pub shared_app_state: SharedAppState,
 }
 
 pub struct NavigationBar {
@@ -108,7 +113,7 @@ pub struct NavigationBar {
 
 impl Component for NavigationBar {
     type Message = Route;
-    type Properties = NavigationBarProps<'static>;
+    type Properties = NavigationBarProps;
 
     fn create(_ctx: &Context<Self>) -> Self {
         NavigationBar {

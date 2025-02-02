@@ -21,6 +21,11 @@ yew = { version = "0.21.0", features = ["csr"] }
 getrandom = { version = "*", features = ["js"] }
 libsopa = { path = "../libsopa" }
 
+[dependencies.uuid]
+version = "1.12.1"
+features = ["v4", "js"]
+
+
 [package.metadata.i18n]
 available-locales = ["en", "pl"]
 default-locale = "en"

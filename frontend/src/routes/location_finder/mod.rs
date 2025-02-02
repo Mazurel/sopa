@@ -27,32 +27,47 @@ fn locations_view(props: &LocationsViewProps) -> Html {
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct LocationFinderProps {
-    pub app_state: SharedAppState<'static>,
+    pub app_state: SharedAppState,
+}
+
+fn fetch_all_locations(db: &crate::locations::LocationsDatabase) -> Vec<Location> {
+    let mut locs = Vec::new();
+    db.use_locations(|locations| {
+        locs.append(&mut locations.locations_in_random_order());
+    });
+    locs
 }
 
 #[function_component(LocationFinder)]
 pub fn location_finder(props: &LocationFinderProps) -> Html {
-    let locations = props.app_state.locations_db.all_locations().clone();
-    let locations_in_order_state = use_state(|| locations.locations_in_random_order().clone());
+    let locations = fetch_all_locations(&props.app_state.locations_db);
+    let locations_in_order_state = {
+        let locations = locations.clone();
+        use_state(move || locations)
+    };
 
     let tag_preference_state = use_state_eq(|| Tags::new());
 
     let on_tag_preference_changed = {
         let locations_state = locations_in_order_state.clone();
         let tag_preference_state = tag_preference_state.clone();
-        let locations = locations.clone();
+        let locations_db = props.app_state.locations_db.clone();
         use_callback((), move |tag_preference: Tags, _| {
-            let new_locations: Vec<Location> =
-                locations.all_locations_in_order(&tag_preference).into();
-            locations_state.set(new_locations);
-            tag_preference_state.set(tag_preference);
+            locations_db.use_locations(|locations| {
+                let new_locations: Vec<Location> =
+                    locations.all_locations_in_order(&tag_preference).into();
+                locations_state.set(new_locations);
+                tag_preference_state.set(tag_preference);
+            });
         })
     };
+
+    let tags: Tags = libsopa::tags::get_all_supported_tags().into();
 
     html! {
         <div class="container">
             <div class="container">
-                <TagPreferenceSelection tags={locations.build_tags()} {on_tag_preference_changed}/>
+                <TagPreferenceSelection tags={tags} {on_tag_preference_changed}/>
             </div>
             <div class="container">
                 <LocationsView locations={(*locations_in_order_state).clone()} selected_tags={(*tag_preference_state).clone()}/>

@@ -4,43 +4,67 @@ use libsopa::{
 };
 use yew::prelude::*;
 
-#[derive(Properties, Clone, PartialEq, Eq)]
-pub struct LocationsDatabase<'a> {
-    locations: std::borrow::Cow<'a, Locations>,
+#[derive(Properties, Clone)]
+pub struct LocationsDatabase {
+    // Note: The ID is used for comparison, technically there may be multiple
+    //       locations databases at the same time, in the future.
+    //       Comparing database content here is just a waste of time.
+    id: uuid::Uuid,
+    locations: std::sync::Arc<std::sync::RwLock<Locations>>,
 }
 
-impl<'a> LocationsDatabase<'a> {
+impl PartialEq for LocationsDatabase {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+
+    fn ne(&self, other: &Self) -> bool {
+        self.id != other.id
+    }
+}
+impl Eq for LocationsDatabase {}
+
+impl LocationsDatabase {
     pub fn new() -> Self {
         LocationsDatabase {
-            locations: std::borrow::Cow::Owned(Locations::new()),
+            id: uuid::Uuid::new_v4(),
+            locations: std::sync::Arc::new(std::sync::RwLock::new(Locations::new())),
         }
     }
 
     pub fn new_with_samples() -> Self {
-        let mut db = Self::new();
-        db.insert_location(Location {
-            name: "OiK Gdańsk".to_string(),
-            tags: Tags::new_tags(["gender:male", "gender:female", "age:adult"]),
-            ..Default::default()
+        let mut database = Self::new();
+        database.use_locations_mut(|locations| {
+            locations.push_new(|loc| {
+                loc.name = "OiK Gdańsk".to_string();
+                loc.tags = Tags::new_tags(["gender:male", "gender:female", "age:adult"]);
+            });
+            locations.push_new(|loc| {
+                loc.name = "OiK Gdańsk - Hostel".to_string();
+                loc.tags =
+                    Tags::new_tags(["gender:male", "gender:female", "type:hostel", "age:adult"]);
+            });
+            locations.push_new(|loc| {
+                loc.name = "OiK Gdynia".to_string();
+                loc.tags = Tags::new_tags(["gender:male", "gender:female", "age:adult", "age:kid"]);
+            });
         });
-        db.insert_location(Location {
-            name: "OiK Gdańsk - Hostel".to_string(),
-            tags: Tags::new_tags(["gender:male", "gender:female", "type:hostel", "age:adult"]),
-            ..Default::default()
-        });
-        db.insert_location(Location {
-            name: "OiK Gdynia".to_string(),
-            tags: Tags::new_tags(["gender:male", "gender:female", "age:adult", "age:kid"]),
-            ..Default::default()
-        });
-        db
+        database
     }
 
-    pub fn insert_location(&mut self, location: Location) {
-        self.locations.to_mut().push(location)
+    pub fn use_locations<F>(&self, use_fn: F)
+    where
+        F: FnOnce(&Locations),
+    {
+        let locations = self.locations.read().unwrap();
+        use_fn(&locations);
     }
 
-    pub fn all_locations(&self) -> &Locations {
-        &self.locations
+    pub fn use_locations_mut<F>(&mut self, use_fn: F)
+    where
+        F: FnOnce(&mut Locations),
+    {
+        let mut locations = self.locations.write().unwrap();
+        use_fn(&mut locations);
     }
 }
