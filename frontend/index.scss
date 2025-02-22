@@ -1,8 +1,10 @@
+@use "sass:color";
 // Load Bulma's base styles and themes (including the minireset)
 @use "../third_party/bulma/sass" with (
     $family-primary: '"Red Hat Text", "Lato", sans-serif'
 );
 @use "../third_party/bulma/sass/utilities/mixins";
+@use "../third_party/bulma/sass/utilities/initial-variables" as bulma_vars;
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Limelight&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap");
 
@@ -21,4 +23,21 @@
         right: 1rem;
         bottom: 1rem;
     }
+}
+
+$selected_border_width: calc(bulma_vars.$gap / 10);
+
+.selectable {
+    cursor: pointer;
+    border: $selected_border_width solid
+        color.adjust(bulma_vars.$green, $alpha: -1);
+}
+
+.selectable:hover {
+    border: $selected_border_width solid
+        color.adjust(bulma_vars.$green, $alpha: -0.8);
+}
+
+.selected {
+    border: $selected_border_width solid bulma_vars.$green;
 }

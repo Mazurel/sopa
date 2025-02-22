@@ -3,7 +3,11 @@ use std::ops::Deref;
 use libsopa::locations::Location;
 use libsopa::tags::get_all_supported_tags;
 use libsopa::yew_components::LocationView;
+use libsopa::yew_components::SelectionSettings;
 use libsopa::yew_components::TagView;
+use log::info;
+use web_sys::HtmlInputElement;
+use web_sys::HtmlTextAreaElement;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;
@@ -27,37 +31,40 @@ fn location_edit(props: &LocationEditProps) -> Html {
     let location_definer_button_reset = t!("location-definer-button-reset");
     let location_definer_button_exit = t!("location-definer-button-exit");
 
-    let location_state = {
-        let location_to_edit = props.location_to_edit.clone();
-        use_state(move || location_to_edit.clone())
-    };
+    // We always want to re-fetch props
+    let location_to_edit = props.location_to_edit.clone();
 
     let change_title: Callback<_> = {
-        let location_state = location_state.clone();
+        let location_to_edit = location_to_edit.clone();
+        let update_location_cb = props.update_location_cb.clone();
         Callback::from(move |event: Event| {
-            if let Some(val) = event.as_string() {
-                let mut location = location_state.deref().clone();
-                location.name = val;
-                location_state.set(location);
+            let maybe_input_element = event.target_dyn_into::<HtmlInputElement>();
+            if let Some(input) = maybe_input_element {
+                let update_location_cb = update_location_cb.clone();
+                let mut location = location_to_edit.clone();
+                location.name = input.value();
+                update_location_cb.emit(location);
             }
         })
     };
 
     let change_address: Callback<_> = {
-        let location_state = location_state.clone();
+        let location_to_edit = location_to_edit.clone();
+        let update_location_cb = props.update_location_cb.clone();
         Callback::from(move |event: Event| {
-            if let Some(val) = event.as_string() {
-                let mut location = location_state.deref().clone();
-                location.address = val;
-                location_state.set(location);
+            let maybe_input_element = event.target_dyn_into::<HtmlInputElement>();
+            if let Some(input) = maybe_input_element {
+                let update_location_cb = update_location_cb.clone();
+                let mut location = location_to_edit.clone();
+                location.address = input.value();
+                update_location_cb.emit(location);
             }
         })
     };
 
     let button_save_on_click: Callback<MouseEvent> = {
-        let update_location = props.update_location_cb.clone();
-        let location_state = location_state.clone();
-        Callback::from(move |_| update_location.emit((*location_state).clone()))
+        // TODO: Commit changes
+        Callback::from(move |_| {})
     };
 
     let all_tags_view: Vec<Html> = get_all_supported_tags()
@@ -76,6 +83,7 @@ fn location_edit(props: &LocationEditProps) -> Html {
                     <input
                         class={"input"}
                         type={"text"}
+                        value={location_to_edit.name.clone()}
                         placeholder={location_definer_title_placeholder}
                         onchange={change_title}
                         />
@@ -149,6 +157,13 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
         })
     };
 
+    let on_selected_cb = {
+        let selected_location_state = selected_location_state.clone();
+        Callback::from(move |location: Location| {
+            selected_location_state.set(location);
+        })
+    };
+
     {
         // In this block we re-fetch data and change state if needed.
         let selected_location_state = selected_location_state.clone();
@@ -165,12 +180,31 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
 
     let all_locations_view: Vec<Html> = locations_list
         .iter()
-        .map(|loc| html!(<LocationView location={loc.clone()}/>))
+        // TODO: Pass Location selection callback and handle it properly
+        .map(|loc| {
+            let on_selected_cb = on_selected_cb.clone();
+            let selection_settings = SelectionSettings {
+                selection_cb: on_selected_cb,
+                state: (*loc) == selected_location,
+            };
+            html!(<LocationView location={loc.clone()} {selection_settings}/>)
+        })
         .collect();
 
     let update_location_cb = {
         let selected_location_state = selected_location_state.clone();
-        use_callback((), move |new_location, _| {
+        let locations_db: UseStateHandle<_> = locations_db.clone();
+        Callback::from(move |new_location: Location| {
+            info!("New Location: {new_location:?}");
+            {
+                // Here we first need to indicate to the DB that location was changed,
+                // then we can update state of the component.
+                let mut locations_db = locations_db.deref().clone();
+                let new_location = new_location.clone();
+                locations_db.use_locations_mut(move |locations| {
+                    locations.push_update(new_location);
+                });
+            }
             selected_location_state.set(new_location);
         })
     };
