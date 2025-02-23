@@ -864,7 +864,6 @@ dependencies = [
  "rust-i18n",
  "serde",
  "uuid",
- "yew",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::tags::{Tag, Tags};
+use libsopa::tags::{Tag, Tags};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TagSelectionType {

@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
+
 use log::info;
 use std::borrow::Cow;
 
@@ -153,7 +154,7 @@ impl Component for NavigationBar {
                     </div>
                     <div class="navbar-menu">
                         <div class="navbar-start">
-                            <div class="navbar-item is-size-1 is-logo-font">
+                            <div class="navbar-item is-size-1 is-logo-font is-unselectable">
                                 {"SOPa"}
                             </div>
                         </div>

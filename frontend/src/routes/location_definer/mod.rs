@@ -1,13 +1,10 @@
 use std::ops::Deref;
 
+use crate::yew_components::{LocationView, SelectionSettings, TagView};
 use libsopa::locations::Location;
 use libsopa::tags::get_all_supported_tags;
-use libsopa::yew_components::LocationView;
-use libsopa::yew_components::SelectionSettings;
-use libsopa::yew_components::TagView;
 use log::info;
 use web_sys::HtmlInputElement;
-use web_sys::HtmlTextAreaElement;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;
@@ -95,6 +92,7 @@ fn location_edit(props: &LocationEditProps) -> Html {
                     <input
                         class={"input"}
                         type={"text"}
+                        value={location_to_edit.address.clone()}
                         placeholder={location_definer_address_placeholder}
                         onchange={change_address}
                         />

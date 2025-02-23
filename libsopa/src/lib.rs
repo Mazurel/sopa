@@ -19,8 +19,6 @@ along with this program; if not, see
 pub mod locations;
 pub mod macros;
 pub mod tags;
-// TODO: Conditionally (feature flag) use yew only !
-pub mod yew_components;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]

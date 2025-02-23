@@ -1,6 +1,6 @@
-use crate::locations::Location;
-use crate::tags::Tags;
 use crate::yew_components::{TagSelectionType, TagView};
+use libsopa::locations::Location;
+use libsopa::tags::Tags;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]

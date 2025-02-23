@@ -22,6 +22,7 @@ mod app;
 mod locations;
 mod navigation;
 mod routes;
+mod yew_components;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]
