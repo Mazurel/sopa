@@ -30,7 +30,7 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
             if let Some(input) = maybe_input_element {
                 let mut location = location_edit_manager.get_location_under_edit();
                 location.name = input.value();
-                location_edit_manager.update_location_cb.emit(location);
+                location_edit_manager.stage_location_changes(location);
             }
         })
     };
@@ -42,7 +42,7 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
             if let Some(input) = maybe_input_element {
                 let mut location = location_edit_manager.get_location_under_edit();
                 location.address = input.value();
-                location_edit_manager.update_location_cb.emit(location);
+                location_edit_manager.stage_location_changes(location);
             }
         })
     };
@@ -50,14 +50,14 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
     let button_save_on_click: Callback<MouseEvent> = {
         let location_edit_manager = props.location_edit_manager.clone();
         Callback::from(move |_| {
-            location_edit_manager.commit_changes_cb.emit(());
+            location_edit_manager.commit_location_changes();
         })
     };
 
     let button_clear_on_click: Callback<MouseEvent> = {
         let location_edit_manager = props.location_edit_manager.clone();
         Callback::from(move |_| {
-            location_edit_manager.clear_changes_cb.emit(());
+            location_edit_manager.clear_location_changes();
         })
     };
 

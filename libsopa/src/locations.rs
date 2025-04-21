@@ -147,6 +147,10 @@ impl Locations {
         }
     }
 
+    pub fn contains(&self, location: &Location) -> bool {
+        self.locations.contains_key(&location.id)
+    }
+
     /// Push state of `new_location` to the database, modyfing permanently
     /// content of the `Location` in the database, based on location ID.
     ///
@@ -169,6 +173,12 @@ impl Locations {
         modify_loc_fn(&mut location);
         self.push_update(location.clone());
         location
+    }
+
+    /// Creates new location instance in the database,
+    /// Afterwards commits the changes.
+    pub fn push_new_nomodify(&mut self) -> Location {
+        self.push_new(|_| {})
     }
 
     pub fn to_bin_data(&self) -> Vec<u8> {

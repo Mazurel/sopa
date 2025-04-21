@@ -8,3 +8,6 @@ navbar:location-finder:
 navbar:location-definer:
   en: Define Location
   pl: Edytuj Placówkę
+navbar:main-page:
+  en: Welcome
+  pl: Powitanie

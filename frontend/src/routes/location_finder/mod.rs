@@ -1,7 +1,6 @@
 use crate::yew_components::{LocationView, TagPreferenceSelection};
 use libsopa::locations::Location;
 use libsopa::tags::Tags;
-use log::*;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;

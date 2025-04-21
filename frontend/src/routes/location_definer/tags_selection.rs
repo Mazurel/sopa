@@ -28,7 +28,7 @@ pub fn tags_selection_edit_for_location(props: &TagsSelectionEditForLocationProp
                 if !location.tags.has_tag(&tag) {
                     location.tags = location.tags.with_tag(tag.clone());
                     assert!(location.tags.has_tag(&tag));
-                    location_edit_manager.update_location_cb.emit(location);
+                    location_edit_manager.stage_location_changes(location);
                 }
             }
             TagSelectionType::NonAcceptable => {
@@ -36,7 +36,7 @@ pub fn tags_selection_edit_for_location(props: &TagsSelectionEditForLocationProp
                 if location.tags.has_tag(&tag) {
                     location.tags = location.tags.without_tag(tag.clone());
                     assert!(!location.tags.has_tag(&tag));
-                    location_edit_manager.update_location_cb.emit(location);
+                    location_edit_manager.stage_location_changes(location);
                 }
             }
         })
