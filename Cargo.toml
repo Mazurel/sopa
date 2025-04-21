@@ -1,3 +1,7 @@
 [workspace]
 members = ["frontend", "libsopa"]
 resolver = "2"
+
+[profile.dev]
+debug = true
+strip = "none"

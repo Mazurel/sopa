@@ -1,5 +1,7 @@
 use yew::prelude::*;
 
+use log::*;
+
 use libsopa::tags::{Tag, Tags};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -19,53 +21,19 @@ pub struct TagViewProps {
     pub selection_changed: Option<Callback<(Tag, TagSelectionType)>>,
 }
 
-#[function_component(TagView)]
-pub fn selectable_tag(props: &TagViewProps) -> Html {
-    use TagSelectionType::*;
+fn tag_selection_into_html_style(selection_state: TagSelectionType) -> Classes {
+    let mut classes: Vec<String> = vec![];
 
-    let tag_selection_state = use_state_eq(|| props.selection_type);
-
-    let tag_selection_state_clone = tag_selection_state.clone();
-    let onclick = Callback::from(move |_| {
-        let next_selection_state = match *tag_selection_state_clone {
-            Acceptable => NonAcceptable,
-            NonAcceptable => Acceptable,
-        };
-        tag_selection_state_clone.set(next_selection_state.clone());
-    });
-
-    let mut classes = Vec::new();
-
-    // When interactive mode is not use, always use property value!
-    let tag_selection = {
-        if props.interactive {
-            *tag_selection_state.clone()
-        } else {
-            props.selection_type.clone()
-        }
-    };
-
-    match tag_selection {
-        Acceptable => {
+    match selection_state {
+        TagSelectionType::Acceptable => {
             classes.push("is-primary".to_string());
-            if props.interactive {
-                classes.push("is-clickable".to_string());
-                if let Some(selection_changed) = &props.selection_changed {
-                    selection_changed.emit((props.tag.clone(), Acceptable));
-                }
-            }
         }
-        NonAcceptable => {
+        TagSelectionType::NonAcceptable => {
             classes.push("is-danger".to_string());
             classes.push("has-background-danger-light".to_string());
-            if props.interactive {
-                classes.push("is-clickable".to_string());
-                if let Some(selection_changed) = &props.selection_changed {
-                    selection_changed.emit((props.tag.clone(), NonAcceptable));
-                }
-            }
         }
     }
+
     classes.append(&mut vec![
         "tag".to_string(),
         "is-size-6".to_string(),
@@ -77,14 +45,51 @@ pub fn selectable_tag(props: &TagViewProps) -> Html {
         "is-unselectable".to_string(),
     ]);
 
+    classes!(classes)
+}
+
+#[function_component(TagView)]
+pub fn selectable_tag(props: &TagViewProps) -> Html {
+    use TagSelectionType::*;
+
+    let tag_selection_state = use_state_eq(|| props.selection_type);
+
+    {
+        let tag_selection_state = tag_selection_state.clone();
+        let selection_type = props.selection_type.clone();
+        use_effect(move || {
+            tag_selection_state.set(selection_type.clone());
+        });
+    }
+
+    let onclick = {
+        let tag_selection_state = tag_selection_state.clone();
+        let selection_changed = props.selection_changed.clone();
+        let tag = props.tag.clone();
+        Callback::from(move |_| {
+            let next_selection_state = match *tag_selection_state {
+                Acceptable => NonAcceptable,
+                NonAcceptable => Acceptable,
+            };
+            tag_selection_state.set(next_selection_state.clone());
+
+            if let Some(selection_changed) = selection_changed.clone() {
+                selection_changed.emit((tag.clone(), next_selection_state));
+            }
+
+            debug!("{:?} -> {:?}", tag.clone(), next_selection_state);
+        })
+    };
+
+    let html_classes = tag_selection_into_html_style(*tag_selection_state);
     html!(
         if props.interactive {
-            <div class={classes!(classes)} {onclick}>
+            <div class={classes!(html_classes, "is-clickable")} {onclick}>
                 {props.tag.human_readable()}
             </div>
         }
         else {
-            <div class={classes!(classes)}>
+            <div class={classes!(html_classes)}>
                 {props.tag.human_readable()}
             </div>
         }
@@ -110,32 +115,35 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
         .into_iter()
         .map(|tag| {
             let selected_tags_state = selected_tags_state.clone();
+            let on_tag_preference_changed = props.on_tag_preference_changed.clone();
+            let current_tag_selection_type = match selected_tags_state.has_tag(tag) {
+                false => TagSelectionType::NonAcceptable,
+                true => TagSelectionType::Acceptable,
+            };
             let cb = move |(tag, state): (Tag, TagSelectionType)| {
                 use TagSelectionType::*;
                 match state {
                     Acceptable => {
-                        let new_tags = selected_tags_state.with_tag(tag.to_string());
-                        selected_tags_state.set(new_tags);
+                        let new_tags = selected_tags_state.with_tag(tag);
+                        selected_tags_state.set(new_tags.clone());
+                        on_tag_preference_changed.emit(new_tags);
                     }
                     NonAcceptable => {
-                        let new_tags = selected_tags_state.without_tag(tag.to_string());
-                        selected_tags_state.set(new_tags);
+                        let new_tags = selected_tags_state.without_tag(tag);
+                        selected_tags_state.set(new_tags.clone());
+                        on_tag_preference_changed.emit(new_tags);
                     }
                 }
             };
             html!(
                 <TagView
                     tag={tag.clone()}
-                    selection_type={TagSelectionType::NonAcceptable}
+                    selection_type={current_tag_selection_type}
                     selection_changed={cb}
                 />
             )
         })
         .collect::<Vec<Html>>();
-
-    props
-        .on_tag_preference_changed
-        .emit((*selected_tags_state).clone());
 
     html! {
         <div class="container card is-max-tablet mt-2 p-1 is-shadowless">

@@ -1,6 +1,7 @@
 use crate::yew_components::{LocationView, TagPreferenceSelection};
 use libsopa::locations::Location;
 use libsopa::tags::Tags;
+use log::*;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;
@@ -52,7 +53,7 @@ pub fn location_finder(props: &LocationFinderProps) -> Html {
         let locations_state = locations_in_order_state.clone();
         let tag_preference_state = tag_preference_state.clone();
         let locations_db = props.app_state.locations_db.clone();
-        use_callback((), move |tag_preference: Tags, _| {
+        Callback::from(move |tag_preference: Tags| {
             locations_db.use_locations(|locations| {
                 let new_locations: Vec<Location> =
                     locations.all_locations_in_order(&tag_preference).into();
@@ -62,12 +63,12 @@ pub fn location_finder(props: &LocationFinderProps) -> Html {
         })
     };
 
-    let tags: Tags = libsopa::tags::get_all_supported_tags().into();
+    let tags = use_memo((), |_| Tags::from(libsopa::tags::get_all_supported_tags()));
 
     html! {
         <div class="container">
             <div class="container">
-                <TagPreferenceSelection tags={tags} {on_tag_preference_changed}/>
+                <TagPreferenceSelection tags={(*tags).clone()} {on_tag_preference_changed}/>
             </div>
             <div class="container">
                 <LocationsView locations={(*locations_in_order_state).clone()} selected_tags={(*tag_preference_state).clone()}/>
