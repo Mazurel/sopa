@@ -47,6 +47,13 @@ impl LocationsDatabase {
         }
     }
 
+    pub fn reload_database_from_bin(&self, bin_data: Vec<u8>) {
+        {
+            let mut locations = self.locations.write().unwrap();
+            *locations = Locations::from_bin_data(bin_data);
+        }
+    }
+
     pub fn new_with_samples() -> Self {
         let mut database = Self::new();
         database.use_locations_mut(|locations| {

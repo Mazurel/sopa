@@ -184,6 +184,10 @@ impl Locations {
     pub fn to_bin_data(&self) -> Vec<u8> {
         bson::to_vec(self).unwrap()
     }
+
+    pub fn from_bin_data(bin_data: Vec<u8>) -> Self {
+        bson::from_slice(&bin_data).unwrap()
+    }
 }
 
 #[cfg(test)]

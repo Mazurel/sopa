@@ -24,7 +24,7 @@ use log::info;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;
-use crate::download::download_binary_data;
+use crate::download::{download_binary_data, upload_binary_data};
 use location_edit::LocationEdit;
 use location_edit_manager::LocationEditManager;
 
@@ -49,10 +49,11 @@ fn fetch_all_locations(db: &crate::locations::LocationsDatabase) -> Vec<Location
 pub fn location_definer(props: &LocationDefinerProps) -> Html {
     let location_definer_add_label = t!("location-definer-add-label");
     let location_definer_save_label = t!("location-definer-save-label");
+    let location_definer_load_label = t!("location-definer-load-label");
 
     let locations_list = {
-        let locations_db = &props.app_state.locations_db;
-        use_state(|| fetch_all_locations(locations_db))
+        let locations_db = props.app_state.locations_db.clone();
+        use_state(|| fetch_all_locations(&locations_db))
     };
     let selected_location_index_state = use_state(|| 0);
     let selected_location_state = {
@@ -65,6 +66,15 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                 .clone()
         })
     };
+
+    {
+        let locations_db = props.app_state.locations_db.clone();
+        let locations_list = locations_list.clone();
+        // This effect is responsible for reloading locations list from DB
+        use_effect_with(locations_db, move |locations_db| {
+            locations_list.set(fetch_all_locations(locations_db));
+        });
+    }
 
     {
         let locations_list = locations_list.clone();
@@ -117,6 +127,24 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
         })
     };
 
+    let on_db_load_request_cb = {
+        let locations_db = props.app_state.locations_db.clone();
+        Callback::from(move |_: MouseEvent| {
+            let locations_db = locations_db.clone();
+            // TODO: Add notification when notification system will be ready
+            upload_binary_data(
+                "sopa.bson",
+                "*.bson",
+                Callback::from(move |binary_data| {
+                    let locations_db_new = (*locations_db).clone();
+                    locations_db_new.reload_database_from_bin(binary_data);
+                    locations_db.set(locations_db_new);
+                }),
+            )
+            .expect("Upload should succeed");
+        })
+    };
+
     let selected_location: Location = selected_location_state.deref().clone();
     info!("Editing location : {selected_location:?}");
 
@@ -150,6 +178,9 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                 </button>
                 <button class="button is-rounded is-primary ml-2" onclick={on_db_save_request_cb}>
                     { location_definer_save_label }
+                </button>
+                <button class="button is-rounded is-warning ml-2" onclick={on_db_load_request_cb}>
+                    { location_definer_load_label }
                 </button>
             </div>
             <div class="columns">

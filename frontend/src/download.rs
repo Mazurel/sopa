@@ -74,7 +74,7 @@ where
     Ok(())
 }
 
-pub fn upload_binary_data<'a, T>(
+pub fn upload_binary_data(
     filename: &str,
     accepts: &str,
     binary_data_cb: Callback<Vec<u8>>,
@@ -93,6 +93,8 @@ pub fn upload_binary_data<'a, T>(
         .map_err(|err| format!("Failed to create anchor: {err:?}"))?
         .dyn_into()
         .map_err(|err| format!("Failed to cast anchor: {err:?}"))?;
+    body.append_child(&input)
+        .map_err(|err| format!("Failed to append child: {err:?}"))?;
 
     input.set_type("file");
     input.set_id(filename);
