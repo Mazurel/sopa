@@ -41,3 +41,8 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
 .selected {
     border: $selected_border_width solid bulma_vars.$green;
 }
+
+// Global transition setting
+* {
+    transition: 377ms;
+}

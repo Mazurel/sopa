@@ -24,6 +24,7 @@ use log::info;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;
+use crate::download::download_binary_data;
 use location_edit::LocationEdit;
 use location_edit_manager::LocationEditManager;
 
@@ -47,6 +48,7 @@ fn fetch_all_locations(db: &crate::locations::LocationsDatabase) -> Vec<Location
 #[function_component(LocationDefiner)]
 pub fn location_definer(props: &LocationDefinerProps) -> Html {
     let location_definer_add_label = t!("location-definer-add-label");
+    let location_definer_save_label = t!("location-definer-save-label");
 
     let locations_list = {
         let locations_db = &props.app_state.locations_db;
@@ -101,6 +103,20 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
         })
     };
 
+    let on_db_save_request_cb = {
+        let locations_db = props.app_state.locations_db.clone();
+        Callback::from(move |_: MouseEvent| {
+            let mut locations_db = locations_db.deref().clone();
+            locations_db.use_locations_mut(move |locations| {
+                let binary_db = locations.to_bin_data();
+                let binary_db_reference: &[u8] = &binary_db;
+                // TODO: Add notification when notification system will be ready
+                download_binary_data(binary_db_reference, "sopa.bson", "application/bson")
+                    .expect("Download should succeed");
+            });
+        })
+    };
+
     let selected_location: Location = selected_location_state.deref().clone();
     info!("Editing location : {selected_location:?}");
 
@@ -128,9 +144,12 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
 
     html!(
         <>
-            <div class="box is-rounded is-pinned-to-right-bot" onclick={on_new_location_request_cb}>
-                <button class="button is-rounded is-info">
+            <div class="is-pinned-to-right-bot">
+                <button class="button is-rounded is-info" onclick={on_new_location_request_cb}>
                     { location_definer_add_label }
+                </button>
+                <button class="button is-rounded is-primary ml-2" onclick={on_db_save_request_cb}>
+                    { location_definer_save_label }
                 </button>
             </div>
             <div class="columns">
