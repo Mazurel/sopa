@@ -16,7 +16,7 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use crate::tags::Tags;
+use crate::{contact::ContactMethods, tags::Tags};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -28,6 +28,7 @@ pub struct Location {
     pub tags: Tags,
     pub address: String,
     pub description: String,
+    pub contact_methods: ContactMethods,
 }
 
 impl Location {
@@ -44,6 +45,7 @@ impl Default for Location {
             tags: Tags::new(),
             address: String::from(""),
             description: String::from(""),
+            contact_methods: ContactMethods::default(),
         }
     }
 }

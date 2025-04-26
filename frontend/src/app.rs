@@ -39,7 +39,7 @@ pub fn app() -> Html {
     let on_view_content_update =
         use_callback((), move |html: Html, _| view_content_clone.set(html));
 
-    let locations_db = use_state(|| LocationsDatabase::new_with_samples());
+    let locations_db = use_state(|| LocationsDatabase::load_default_database());
 
     let shared_app_state = use_state(|| SharedAppState { locations_db });
 

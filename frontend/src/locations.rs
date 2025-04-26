@@ -16,7 +16,7 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use libsopa::{locations::Locations, tags::Tags};
+use libsopa::locations::Locations;
 use yew::prelude::*;
 
 #[derive(Properties, Clone)]
@@ -54,22 +54,12 @@ impl LocationsDatabase {
         }
     }
 
-    pub fn new_with_samples() -> Self {
+    pub fn load_default_database() -> Self {
+        let database_raw: Vec<u8> = include_bytes!("initial_database.bson").to_vec();
+
         let mut database = Self::new();
-        database.use_locations_mut(|locations| {
-            locations.push_new(|loc| {
-                loc.name = "OiK Gdańsk".to_string();
-                loc.tags = Tags::new_tags(["gender:male", "gender:female", "age:adult"]);
-            });
-            locations.push_new(|loc| {
-                loc.name = "OiK Gdańsk - Hostel".to_string();
-                loc.tags =
-                    Tags::new_tags(["gender:male", "gender:female", "type:hostel", "age:adult"]);
-            });
-            locations.push_new(|loc| {
-                loc.name = "OiK Gdynia".to_string();
-                loc.tags = Tags::new_tags(["gender:male", "gender:female", "age:adult", "age:kid"]);
-            });
+        database.use_locations_mut(move |locations| {
+            *locations = Locations::from_bin_data(database_raw);
         });
         database
     }

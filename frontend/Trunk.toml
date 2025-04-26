@@ -1,5 +1,6 @@
 [tools]
 sass = "1.83.0"
+wasm_bindgen = "0.2.100"
 
 [serve]
 no_autoreload = true # Disable auto-reload of the web app.

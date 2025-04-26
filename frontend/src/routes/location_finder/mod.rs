@@ -33,7 +33,7 @@ struct LocationsViewProps {
 fn locations_view(props: &LocationsViewProps) -> Html {
     let all_locations = props.locations
         .iter()
-        .map(|l| html!(<LocationView location={l.clone()} global_selected_tags={props.selected_tags.clone()}/>))
+        .map(|l| html!(<LocationView location={l.clone()} global_selected_tags={props.selected_tags.clone()} simplified_view={false}/>))
         .collect::<Vec<_>>();
 
     html!(

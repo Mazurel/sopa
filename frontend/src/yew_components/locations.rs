@@ -30,6 +30,8 @@ pub struct SelectionSettings {
 #[derive(Properties, Clone, PartialEq)]
 pub struct LocationViewProps {
     pub location: Location,
+    #[prop_or(true)]
+    pub simplified_view: bool,
     #[prop_or(None)]
     pub global_selected_tags: Option<Tags>,
     #[prop_or(None)]
@@ -89,6 +91,8 @@ pub fn location_view(props: &LocationViewProps) -> Html {
         }
     }
 
+    let is_address_defined = location.address.len() > 0;
+
     html!(
         <div class={wrapper_classes} {onclick}>
             <div class="card">
@@ -97,6 +101,16 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                         {location.name.clone()}
                     </div>
                 </div>
+                if !props.simplified_view {
+                    if is_address_defined {
+                        <div class="icon-text ml-2 mt-2">
+                          <span class="icon has-text-info">
+                            <i class="fas fa-home"></i>
+                          </span>
+                          <span>{location.address.clone()}</span>
+                        </div>
+                    }
+                }
                 if let Some(tag_elements) = tag_elements {
                     <div class="card-content">
                         <div class="component">

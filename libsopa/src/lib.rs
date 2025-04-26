@@ -16,6 +16,7 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
+pub mod contact;
 pub mod locations;
 pub mod macros;
 pub mod tags;
