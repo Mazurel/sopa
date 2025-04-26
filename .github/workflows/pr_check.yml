@@ -29,6 +29,6 @@ jobs:
         with:
           version: "latest"
       - name: Build Frontend
-        run: cd frontend && trunk build
+        run: cd frontend && RUSTFLAGS='--cfg getrandom_backend="wasm_js"' trunk build
       - name: Run tests
         run: cargo test --verbose

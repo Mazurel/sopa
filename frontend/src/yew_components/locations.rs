@@ -16,7 +16,7 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use crate::yew_components::{TagSelectionType, TagView};
+use crate::yew_components::{ContactMethodsView, TagSelectionType, TagView};
 use libsopa::locations::Location;
 use libsopa::tags::Tags;
 use yew::prelude::*;
@@ -110,6 +110,7 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                           <span>{location.address.clone()}</span>
                         </div>
                     }
+                    <ContactMethodsView methods={location.contact_methods.clone()} />
                 }
                 if let Some(tag_elements) = tag_elements {
                     <div class="card-content">

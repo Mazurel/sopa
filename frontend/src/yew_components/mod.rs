@@ -16,8 +16,10 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
+mod contacts;
 mod locations;
 mod tags;
 
+pub use contacts::*;
 pub use locations::*;
 pub use tags::*;

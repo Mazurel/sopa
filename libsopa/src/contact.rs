@@ -22,6 +22,7 @@ use serde::{Deserialize, Serialize};
 pub enum ContactType {
     PhoneNumber(String),
     Email(String),
+    WebAddress(String),
 }
 
 #[derive(Debug, PartialEq, Clone, Eq, Deserialize, Serialize)]
