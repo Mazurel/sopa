@@ -18,9 +18,7 @@ along with this program; if not, see
 
 use js_sys::{wasm_bindgen::prelude::*, ArrayBuffer, Function, Uint8Array};
 use log::*;
-use web_sys::{
-    Blob, BlobPropertyBag, FileReader, HtmlAnchorElement, HtmlElement, HtmlInputElement, Url,
-};
+use web_sys::{Blob, BlobPropertyBag, FileReader, HtmlAnchorElement, HtmlInputElement, Url};
 use yew::Callback;
 
 /// Start file download for user of `data` bytes, named as a `filename`.
