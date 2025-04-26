@@ -22,6 +22,14 @@ use log::*;
 
 use libsopa::contact::{ContactMethods, ContactType};
 
+fn get_contact_fontawesome_icon(contact: ContactType) -> &'static str {
+    match contact {
+        ContactType::Email(_) => "fa-envelope",
+        ContactType::PhoneNumber(_) => "fa-phone-volume",
+        ContactType::WebAddress(_) => "fa-link",
+    }
+}
+
 #[derive(Properties, PartialEq)]
 pub struct ContactViewProps {
     pub contact: ContactType,
@@ -29,11 +37,33 @@ pub struct ContactViewProps {
 
 #[function_component(ContactView)]
 pub fn contact_view(props: &ContactViewProps) -> Html {
-    let contact_view_fontawesome_icon = match props.contact {
-        ContactType::Email(_) => "fa-envelope",
-        ContactType::PhoneNumber(_) => "fa-phone-volume",
-        ContactType::WebAddress(_) => "fa-link",
+    let contact_view_fontawesome_icon = get_contact_fontawesome_icon(props.contact.clone());
+
+    let contact_view_content = match props.contact.clone() {
+        ContactType::Email(email) => email,
+        ContactType::PhoneNumber(phone) => phone,
+        ContactType::WebAddress(address) => address,
     };
+
+    let icon_class = classes!(["fas", contact_view_fontawesome_icon,]);
+    html!(
+        <div class="icon-text ml-2 mt-2 mb-1">
+          <span class="icon has-text-info">
+            <i class={icon_class}></i>
+          </span>
+          <span>{contact_view_content}</span>
+        </div>
+    )
+}
+
+#[derive(Properties, PartialEq)]
+pub struct ContactEditProps {
+    pub contact: ContactType,
+}
+
+#[function_component(ContactEdit)]
+pub fn contact_edit(props: &ContactViewProps) -> Html {
+    let contact_view_fontawesome_icon = get_contact_fontawesome_icon(props.contact.clone());
 
     let contact_view_content = match props.contact.clone() {
         ContactType::Email(email) => email,
@@ -65,4 +95,24 @@ pub fn contacts_view(props: &ContactsViewProps) -> Html {
         .into_iter()
         .map(|contact| html!(<ContactView contact={contact.clone()}/>))
         .collect()
+}
+
+#[derive(Properties, PartialEq)]
+pub struct ContactsEditProps {
+    pub methods: ContactMethods,
+}
+
+#[function_component(ContactMethodsEdit)]
+pub fn contacts_view(props: &ContactsEditProps) -> Html {
+    let contacts_edit_menu_title = t!("contacts-edit-menu-title");
+
+    html!(
+        <div class="block">
+            <span class="is-size-5">{contacts_edit_menu_title}</span>
+            // TODO: Put here list of editable contacts
+            <button class="icon m-3">
+                <i class="fas fa-lg fa-plus"></i>
+            </button>
+        </div>
+    )
 }

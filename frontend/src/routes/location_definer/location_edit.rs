@@ -18,6 +18,7 @@ along with this program; if not, see
 
 use super::location_edit_manager::LocationEditManager;
 use super::tags_selection::TagsSelectionEditForLocation;
+use crate::yew_components::ContactMethodsEdit;
 use libsopa::locations::Location;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -110,6 +111,7 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
                         />
                 </div>
             </div>
+            <ContactMethodsEdit methods={location_to_edit.contact_methods.clone()}/>
             <div class="field">
                 <div class="label">{location_definer_tags_label}</div>
                 <div class="control">
