@@ -8,6 +8,12 @@ bson = "2.13.0"
 rust-i18n = "3.1.2"
 serde = { version = "1.0.217", features = ["derive", "serde_derive"] }
 
+deli = { version = "0.2.0", optional = true }
+
+[features]
+default = []
+wasm = ["deli"]
+
 [dependencies.uuid]
 version = "1.12.1"
 # For support in the wasm + uuidv4 generation:

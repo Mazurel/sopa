@@ -18,7 +18,9 @@ along with this program; if not, see
 
 use js_sys::{wasm_bindgen::prelude::*, ArrayBuffer, Function, Uint8Array};
 use log::*;
-use web_sys::{Blob, BlobPropertyBag, FileReader, HtmlAnchorElement, HtmlInputElement, Url};
+use web_sys::{
+    Blob, BlobPropertyBag, FileReader, HtmlAnchorElement, HtmlElement, HtmlInputElement, Url,
+};
 use yew::Callback;
 
 /// Start file download for user of `data` bytes, named as a `filename`.
@@ -100,6 +102,9 @@ pub fn upload_binary_data(
     input.set_id(filename);
     input.set_name(filename);
     input.set_accept(accepts);
+    input
+        .set_attribute("style", "visibility: hidden;")
+        .map_err(|err| format!("Failed to change style attribute: {err:?}"))?;
 
     let on_input_changed: Function = {
         let input = input.clone();

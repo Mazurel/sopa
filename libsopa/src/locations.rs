@@ -17,12 +17,16 @@ along with this program; if not, see
 */
 
 use crate::{contact::ContactMethods, tags::Tags};
+#[cfg(feature = "wasm")]
+use deli::Model;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "wasm", derive(Model))]
 pub struct Location {
+    #[cfg_attr(feature = "wasm", deli(key))]
     id: Uuid,
     pub name: String,
     pub tags: Tags,

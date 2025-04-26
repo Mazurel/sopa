@@ -103,7 +103,7 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                 </div>
                 if !props.simplified_view {
                     if is_address_defined {
-                        <div class="icon-text ml-2 mt-2">
+                        <div class="icon-text ml-6 mt-2">
                           <span class="icon has-text-info">
                             <i class="fas fa-home"></i>
                           </span>

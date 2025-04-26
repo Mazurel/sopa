@@ -16,8 +16,25 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use libsopa::locations::Locations;
+use deli::{Database, Error, Model, Transaction};
+use libsopa::locations::{Location, Locations};
+use log::*;
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
+
+const LOCATIONS_STORE_NAME: &str = "locations";
+
+fn create_read_transaction(database: &Database) -> Result<Transaction, Error> {
+    database.transaction().with_model::<Location>().build()
+}
+
+fn create_write_transaction(database: &Database) -> Result<Transaction, Error> {
+    database
+        .transaction()
+        .writable()
+        .with_model::<Location>()
+        .build()
+}
 
 #[derive(Properties, Clone)]
 pub struct LocationsDatabase {
@@ -41,9 +58,109 @@ impl Eq for LocationsDatabase {}
 
 impl LocationsDatabase {
     pub fn new() -> Self {
-        LocationsDatabase {
+        let new_self = LocationsDatabase {
             id: uuid::Uuid::new_v4(),
             locations: std::sync::Arc::new(std::sync::RwLock::new(Locations::new())),
+        };
+
+        {
+            let new_self: LocationsDatabase = new_self.clone();
+            spawn_local(async move {
+                let mut new_self: LocationsDatabase = new_self.clone();
+                new_self.fetch_locations_from_indexed_db_wrapped().await;
+            });
+        }
+
+        new_self
+    }
+
+    async fn backup_locations_in_indexed_db(&self) -> Result<(), String> {
+        // Open the database, creating it if needed
+        let db = Database::builder(LOCATIONS_STORE_NAME)
+            .version(1)
+            .add_model::<Location>()
+            .build()
+            .await
+            .map_err(|err| format!("Failed opening database: {err:?}"))?;
+
+        let write_transaction = create_write_transaction(&db)
+            .map_err(|err| format!("Failed creating write transaction: {err:?}"))?;
+        let location_transaction = Location::with_transaction(&write_transaction)
+            .map_err(|err| format!("Failed creating location transaction: {err:?}"))?;
+        {
+            let locations = {
+                let locations = self.locations.read().unwrap();
+                locations.locations_in_random_order()
+            };
+            for location in locations {
+                info!("BACKUP");
+
+                match location_transaction
+                    .get(&location.get_id())
+                    .await
+                    .map_err(|err| format!("Failed getting location: {err:?}"))?
+                {
+                    Some(_) => {
+                        // Update
+                        location_transaction
+                            .update(&location)
+                            .await
+                            .map_err(|err| {
+                                format!("Failed changing location {location:?}: {err:?}")
+                            })?;
+                    }
+                    None => {
+                        // Add
+                        location_transaction.add(&location).await.map_err(|err| {
+                            format!("Failed adding location {location:?}: {err:?}")
+                        })?;
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    async fn fetch_locations_from_indexed_db(&mut self) -> Result<(), String> {
+        // Open the database, creating it if needed
+        let db = Database::builder(LOCATIONS_STORE_NAME)
+            .version(1)
+            .add_model::<Location>()
+            .build()
+            .await
+            .map_err(|err| format!("Failed opening database: {err:?}"))?;
+
+        let read_transaction = create_read_transaction(&db)
+            .map_err(|err| format!("Failed creating read transaction: {err:?}"))?;
+        let location_transaction = Location::with_transaction(&read_transaction)
+            .map_err(|err| format!("Failed creating location transaction: {err:?}"))?;
+
+        let all_locations = location_transaction
+            .get_all(.., None)
+            .await
+            .map_err(|err| format!("Failed reading all locations: {err:?}"))?;
+
+        self.use_locations_mut_without_indexed_db(move |locations| {
+            for location in all_locations {
+                locations.push_update(location);
+            }
+        });
+
+        Ok(())
+    }
+
+    async fn backup_locations_in_indexed_db_wrapped(&self) {
+        match self.backup_locations_in_indexed_db().await {
+            Ok(_) => (),
+            Err(err) => warn!("Failed backing up location in IndexedDB: {err:?}"),
+        }
+    }
+
+    async fn fetch_locations_from_indexed_db_wrapped(&mut self) {
+        match self.fetch_locations_from_indexed_db().await {
+            Ok(_) => (),
+            Err(err) => warn!("Failed fetching locations from IndexedDB: {err:?}"),
         }
     }
 
@@ -58,7 +175,8 @@ impl LocationsDatabase {
         let database_raw: Vec<u8> = include_bytes!("initial_database.bson").to_vec();
 
         let mut database = Self::new();
-        database.use_locations_mut(move |locations| {
+        // We do not want to overwrite whatever is in indexed db
+        database.use_locations_mut_without_indexed_db(move |locations| {
             *locations = Locations::from_bin_data(database_raw);
         });
         database
@@ -73,6 +191,18 @@ impl LocationsDatabase {
     }
 
     pub fn use_locations_mut<F>(&mut self, use_fn: F)
+    where
+        F: FnOnce(&mut Locations),
+    {
+        self.use_locations_mut_without_indexed_db(use_fn);
+        let database: LocationsDatabase = self.clone();
+        spawn_local(async move {
+            let database: LocationsDatabase = database.clone();
+            database.backup_locations_in_indexed_db_wrapped().await;
+        });
+    }
+
+    fn use_locations_mut_without_indexed_db<F>(&mut self, use_fn: F)
     where
         F: FnOnce(&mut Locations),
     {

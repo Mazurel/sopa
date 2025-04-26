@@ -28,7 +28,9 @@ web-sys = { version = "0.3.76", features = [
 yew = { version = "0.21.0", features = ["csr"] }
 # NOTE: Random by default doesn't support browser JS
 getrandom = { version = "0.3.0", features = ["wasm_js"] }
-libsopa = { path = "../libsopa" }
+libsopa = { path = "../libsopa", features = ["wasm"] }
+deli = "0.2.0"
+wasm-bindgen-futures = "0.4.50"
 
 [dependencies.uuid]
 version = "1.12.1"
