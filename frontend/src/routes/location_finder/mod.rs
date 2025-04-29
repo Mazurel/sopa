@@ -19,6 +19,7 @@ along with this program; if not, see
 use crate::yew_components::{LocationView, TagPreferenceSelection};
 use libsopa::locations::Location;
 use libsopa::tags::Tags;
+use log::*;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;
@@ -58,25 +59,30 @@ fn fetch_all_locations(db: &crate::locations::LocationsDatabase) -> Vec<Location
 
 #[function_component(LocationFinder)]
 pub fn location_finder(props: &LocationFinderProps) -> Html {
-    let locations = fetch_all_locations(&props.app_state.locations_db);
     let locations_in_order_state = {
-        let locations = locations.clone();
-        use_state(move || locations)
+        let locations = fetch_all_locations(&props.app_state.locations_db);
+        use_state_eq(move || locations)
     };
-
     let tag_preference_state = use_state_eq(|| Tags::new());
 
-    let on_tag_preference_changed = {
+    {
+        let locations_db = props.app_state.locations_db.clone();
         let locations_state = locations_in_order_state.clone();
         let tag_preference_state = tag_preference_state.clone();
-        let locations_db = props.app_state.locations_db.clone();
-        Callback::from(move |tag_preference: Tags| {
-            locations_db.use_locations(|locations| {
-                let new_locations: Vec<Location> =
-                    locations.all_locations_in_order(&tag_preference).into();
+        use_effect(move || {
+            locations_db.use_locations(move |locations| {
+                let new_locations: Vec<Location> = locations
+                    .all_locations_in_order(&tag_preference_state)
+                    .into();
                 locations_state.set(new_locations);
-                tag_preference_state.set(tag_preference);
             });
+        });
+    }
+
+    let on_tag_preference_changed = {
+        let tag_preference_state = tag_preference_state.clone();
+        Callback::from(move |tag_preference: Tags| {
+            tag_preference_state.set(tag_preference);
         })
     };
 

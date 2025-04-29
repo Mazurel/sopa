@@ -36,7 +36,7 @@ pub enum Route {
 }
 
 impl Route {
-    fn into_route_name(&self) -> Cow<'static, str> {
+    pub fn into_route_name(&self) -> Cow<'static, str> {
         match self {
             Route::About => t!("navbar:about"),
             Route::LocationDefiner => t!("navbar:location-definer"),
@@ -47,7 +47,7 @@ impl Route {
 
     // NOTE: We force static lifetime here, to simplify lifetime management
     //       in the componenets of the routes - it is always statically allocated.
-    fn into_html_view(&self, app_state: SharedAppState) -> Html {
+    pub fn into_html_view(&self, app_state: SharedAppState) -> Html {
         // TODO: Use shared app state in the routes
         match self {
             Route::LocationFinder => html!(<LocationFinder {app_state}/>),
@@ -104,7 +104,7 @@ fn naventry(props: &NavigationEntryProps) -> Html {
 
 #[derive(Properties, PartialEq)]
 pub struct NavigationBarProps {
-    pub on_view_content_update: Callback<Html>,
+    pub on_view_content_update: Callback<Route>,
     pub shared_app_state: SharedAppState,
 }
 
@@ -118,7 +118,7 @@ impl Component for NavigationBar {
 
     fn create(_ctx: &Context<Self>) -> Self {
         NavigationBar {
-            route: Route::LocationFinder,
+            route: Route::MainPage,
         }
     }
 
@@ -170,9 +170,7 @@ impl Component for NavigationBar {
     fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
         if first_render {
             let props = ctx.props();
-            props
-                .on_view_content_update
-                .emit(self.route.into_html_view(props.shared_app_state.clone()));
+            props.on_view_content_update.emit(self.route.clone());
         }
     }
 
@@ -180,9 +178,7 @@ impl Component for NavigationBar {
         if self.route != route {
             self.route = route;
             let props = ctx.props();
-            props
-                .on_view_content_update
-                .emit(self.route.into_html_view(props.shared_app_state.clone()));
+            props.on_view_content_update.emit(self.route.clone());
             true
         } else {
             false

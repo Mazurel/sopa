@@ -43,6 +43,7 @@ pub struct LocationsDatabase {
     //       Comparing database content here is just a waste of time.
     id: uuid::Uuid,
     locations: std::sync::Arc<std::sync::RwLock<Locations>>,
+    yew_refresh_handle: UseForceUpdateHandle,
 }
 
 impl PartialEq for LocationsDatabase {
@@ -57,10 +58,11 @@ impl PartialEq for LocationsDatabase {
 impl Eq for LocationsDatabase {}
 
 impl LocationsDatabase {
-    pub fn new() -> Self {
+    pub fn new(yew_refresh_handle: UseForceUpdateHandle) -> Self {
         let new_self = LocationsDatabase {
             id: uuid::Uuid::new_v4(),
             locations: std::sync::Arc::new(std::sync::RwLock::new(Locations::new())),
+            yew_refresh_handle,
         };
 
         {
@@ -159,7 +161,10 @@ impl LocationsDatabase {
 
     async fn fetch_locations_from_indexed_db_wrapped(&mut self) {
         match self.fetch_locations_from_indexed_db().await {
-            Ok(_) => (),
+            Ok(_) => {
+                self.yew_refresh_handle.force_update();
+                info!("Force update");
+            }
             Err(err) => warn!("Failed fetching locations from IndexedDB: {err:?}"),
         }
     }
@@ -171,10 +176,10 @@ impl LocationsDatabase {
         }
     }
 
-    pub fn load_default_database() -> Self {
+    pub fn load_default_database(yew_refresh_handle: UseForceUpdateHandle) -> Self {
         let database_raw: Vec<u8> = include_bytes!("initial_database.bson").to_vec();
 
-        let mut database = Self::new();
+        let mut database = Self::new(yew_refresh_handle);
         // We do not want to overwrite whatever is in indexed db
         database.use_locations_mut_without_indexed_db(move |locations| {
             *locations = Locations::from_bin_data(database_raw);

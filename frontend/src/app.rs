@@ -16,10 +16,11 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
+use log::*;
 use yew::prelude::*;
 
 use crate::locations::LocationsDatabase;
-use crate::navigation::NavigationBar;
+use crate::navigation::{NavigationBar, Route};
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct SharedAppState {
@@ -28,20 +29,26 @@ pub struct SharedAppState {
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let view_content = use_state_eq(|| {
-        html!(
+    let selected_route: UseStateHandle<Option<Route>> = use_state(|| None);
+    let refresh_app = use_force_update();
+    let locations_db = use_state(move || LocationsDatabase::load_default_database(refresh_app));
+    let shared_app_state = use_state(|| SharedAppState { locations_db });
+
+    let on_view_content_update = {
+        let selected_route = selected_route.clone();
+        Callback::from(move |route: Route| {
+            selected_route.set(Some(route));
+        })
+    };
+
+    let view_content = match *selected_route {
+        None => html!(
             <div>
                 {"⚒️ Loading page ⚒️"}
             </div>
-        )
-    });
-    let view_content_clone = view_content.clone();
-    let on_view_content_update =
-        use_callback((), move |html: Html, _| view_content_clone.set(html));
-
-    let locations_db = use_state(|| LocationsDatabase::load_default_database());
-
-    let shared_app_state = use_state(|| SharedAppState { locations_db });
+        ),
+        Some(route) => route.into_html_view((*shared_app_state).clone()),
+    };
 
     html! {
         <div>
@@ -49,7 +56,7 @@ pub fn app() -> Html {
                 <NavigationBar {on_view_content_update} shared_app_state={(*shared_app_state).clone()}/>
             </div>
             <div class="container">
-                {(*view_content).clone()}
+                {view_content}
             </div>
         </div>
     }
