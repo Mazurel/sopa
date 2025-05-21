@@ -34,12 +34,14 @@ pub struct LocationEditManager {
     clear_changes_cb: Callback<()>,
     get_location_under_edit_cb: Callback<(), Location>,
     request_new_location_cb: Callback<(), Location>,
+    remove_current_location_cb: Callback<()>,
 }
 
 impl LocationEditManager {
     pub fn init(
         app_state: SharedAppState,
         selected_location: UseStateHandle<Location>,
+        on_current_location_removed: Callback<()>,
     ) -> LocationEditManager {
         let get_location_under_edit_cb = {
             let selected_location_state = selected_location.clone();
@@ -97,12 +99,20 @@ impl LocationEditManager {
             })
         };
 
+        let remove_current_location_cb = {
+            Callback::from(move |_| {
+                let on_current_location_removed = on_current_location_removed.clone();
+                on_current_location_removed.emit(());
+            })
+        };
+
         LocationEditManager {
             stage_changes_cb: update_location_cb,
             commit_changes_cb,
             clear_changes_cb,
             get_location_under_edit_cb,
             request_new_location_cb,
+            remove_current_location_cb,
         }
     }
 
@@ -129,5 +139,9 @@ impl LocationEditManager {
 
     pub fn request_new_location(&self) -> Location {
         self.request_new_location_cb.emit(())
+    }
+
+    pub fn remove_current_location(&self) {
+        self.remove_current_location_cb.emit(())
     }
 }

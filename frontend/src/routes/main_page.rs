@@ -22,10 +22,10 @@ use yew::prelude::*;
 pub fn main_page() -> Html {
     html!(
         <>
-            <section class="hero is-medium is-primary">
+            <section class="hero is-medium is-primary  is-logo-font">
                 <div class="hero-body">
-                    <h1 class="block is-size-2 has-text-centered has-text-weight-bold">
-                        {"Witaj w SOPa Aphia"}
+                    <h1 class="block is-size-1 has-text-centered has-text-weight-bold">
+                        {"Witaj w SOP Aphia"}
                     </h1>
                 </div>
             </section>

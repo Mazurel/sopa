@@ -16,10 +16,13 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
+use std::collections::HashSet;
+
 use deli::{Database, Error, Model, Transaction};
 use libsopa::locations::{Location, Locations};
 use log::*;
-use wasm_bindgen_futures::spawn_local;
+use uuid::Uuid;
+use yew::platform::spawn_local;
 use yew::prelude::*;
 
 const LOCATIONS_STORE_NAME: &str = "locations";
@@ -36,14 +39,18 @@ fn create_write_transaction(database: &Database) -> Result<Transaction, Error> {
         .build()
 }
 
+pub struct LocationsWrapper {
+    locations: Locations,
+    locations_changed_callbacks: Vec<Callback<()>>,
+}
+
 #[derive(Properties, Clone)]
 pub struct LocationsDatabase {
     // Note: The ID is used for comparison, technically there may be multiple
     //       locations databases at the same time, in the future.
     //       Comparing database content here is just a waste of time.
     id: uuid::Uuid,
-    locations: std::sync::Arc<std::sync::RwLock<Locations>>,
-    yew_refresh_handle: UseForceUpdateHandle,
+    locations: std::sync::Arc<std::sync::RwLock<LocationsWrapper>>,
 }
 
 impl PartialEq for LocationsDatabase {
@@ -58,11 +65,13 @@ impl PartialEq for LocationsDatabase {
 impl Eq for LocationsDatabase {}
 
 impl LocationsDatabase {
-    pub fn new(yew_refresh_handle: UseForceUpdateHandle) -> Self {
+    pub fn new() -> Self {
         let new_self = LocationsDatabase {
             id: uuid::Uuid::new_v4(),
-            locations: std::sync::Arc::new(std::sync::RwLock::new(Locations::new())),
-            yew_refresh_handle,
+            locations: std::sync::Arc::new(std::sync::RwLock::new(LocationsWrapper {
+                locations: Locations::new(),
+                locations_changed_callbacks: vec![],
+            })),
         };
 
         {
@@ -85,38 +94,79 @@ impl LocationsDatabase {
             .await
             .map_err(|err| format!("Failed opening database: {err:?}"))?;
 
-        let write_transaction = create_write_transaction(&db)
-            .map_err(|err| format!("Failed creating write transaction: {err:?}"))?;
-        let location_transaction = Location::with_transaction(&write_transaction)
-            .map_err(|err| format!("Failed creating location transaction: {err:?}"))?;
         {
             let locations = {
-                let locations = self.locations.read().unwrap();
+                let locations = &self.locations.read().unwrap().locations;
                 locations.locations_in_random_order()
             };
-            for location in locations {
-                info!("BACKUP");
+            let mut used_locations_ids: HashSet<Uuid> = HashSet::with_capacity(locations.len());
 
-                match location_transaction
-                    .get(&location.get_id())
+            {
+                let write_transaction = create_write_transaction(&db)
+                    .map_err(|err| format!("Failed creating write transaction: {err:?}"))?;
+                let location_write_transaction = Location::with_transaction(&write_transaction)
+                    .map_err(|err| format!("Failed creating location transaction: {err:?}"))?;
+                for location in locations {
+                    used_locations_ids.insert(location.get_id());
+                    match location_write_transaction
+                        .get(&location.get_id())
+                        .await
+                        .map_err(|err| format!("Failed getting location: {err:?}"))?
+                    {
+                        Some(_) => {
+                            // Update
+                            location_write_transaction
+                                .update(&location)
+                                .await
+                                .map_err(|err| {
+                                    format!("Failed changing location {location:?}: {err:?}")
+                                })?;
+                        }
+                        None => {
+                            // Add
+                            location_write_transaction
+                                .add(&location)
+                                .await
+                                .map_err(|err| {
+                                    format!("Failed adding location {location:?}: {err:?}")
+                                })?;
+                        }
+                    }
+                }
+            }
+
+            let all_keys = {
+                let read_transaction = create_read_transaction(&db)
+                    .map_err(|err| format!("Failed creating read transaction: {err:?}"))?;
+                let location_read_transaction = Location::with_transaction(&read_transaction)
+                    .map_err(|err| format!("Failed creating location transaction: {err:?}"))?;
+                location_read_transaction
+                    .get_all_keys(.., None)
                     .await
-                    .map_err(|err| format!("Failed getting location: {err:?}"))?
+                    .map_err(|err| format!("Failed getting all keys: {err:?}"))?
+            };
+            info!("all keys: {all_keys:?}");
+            let all_unmatched_keys: Vec<Uuid> = all_keys
+                .into_iter()
+                .filter(|x| !used_locations_ids.contains(x))
+                .collect();
+
+            {
+                let write_transaction = create_write_transaction(&db)
+                    .map_err(|err| format!("Failed creating write transaction: {err:?}"))?;
+                let location_write_transaction = Location::with_transaction(&write_transaction)
+                    .map_err(|err| format!("Failed creating location transaction: {err:?}"))?;
+                for unmatched_key in all_unmatched_keys
+                    .into_iter()
+                    .filter(|x| !used_locations_ids.contains(x))
                 {
-                    Some(_) => {
-                        // Update
-                        location_transaction
-                            .update(&location)
-                            .await
-                            .map_err(|err| {
-                                format!("Failed changing location {location:?}: {err:?}")
-                            })?;
-                    }
-                    None => {
-                        // Add
-                        location_transaction.add(&location).await.map_err(|err| {
-                            format!("Failed adding location {location:?}: {err:?}")
+                    info!("Removing: {unmatched_key:?}");
+                    location_write_transaction
+                        .delete(&unmatched_key)
+                        .await
+                        .map_err(|err| {
+                            format!("Failed removing location with key {unmatched_key:?}: {err:?}")
                         })?;
-                    }
                 }
             }
         }
@@ -162,24 +212,32 @@ impl LocationsDatabase {
     async fn fetch_locations_from_indexed_db_wrapped(&mut self) {
         match self.fetch_locations_from_indexed_db().await {
             Ok(_) => {
-                self.yew_refresh_handle.force_update();
+                self.notify_about_db_update();
                 info!("Force update");
             }
             Err(err) => warn!("Failed fetching locations from IndexedDB: {err:?}"),
         }
     }
 
-    pub fn reload_database_from_bin(&self, bin_data: Vec<u8>) {
-        {
-            let mut locations = self.locations.write().unwrap();
-            *locations = Locations::from_bin_data(bin_data);
+    pub fn notify_about_db_update(&self) {
+        let callbacks = &self.locations.read().unwrap().locations_changed_callbacks;
+        for callback in callbacks {
+            callback.emit(());
         }
     }
 
-    pub fn load_default_database(yew_refresh_handle: UseForceUpdateHandle) -> Self {
+    pub fn reload_database_from_bin(&self, bin_data: Vec<u8>) {
+        {
+            let locations = &mut self.locations.write().unwrap().locations;
+            *locations = Locations::from_bin_data(bin_data);
+        }
+        self.notify_about_db_update();
+    }
+
+    pub fn load_default_database() -> Self {
         let database_raw: Vec<u8> = include_bytes!("initial_database.bson").to_vec();
 
-        let mut database = Self::new(yew_refresh_handle);
+        let mut database = Self::new();
         // We do not want to overwrite whatever is in indexed db
         database.use_locations_mut_without_indexed_db(move |locations| {
             *locations = Locations::from_bin_data(database_raw);
@@ -191,7 +249,7 @@ impl LocationsDatabase {
     where
         F: FnOnce(&Locations),
     {
-        let locations = self.locations.read().unwrap();
+        let locations = &self.locations.read().unwrap().locations;
         use_fn(&locations);
     }
 
@@ -211,7 +269,17 @@ impl LocationsDatabase {
     where
         F: FnOnce(&mut Locations),
     {
-        let mut locations = self.locations.write().unwrap();
-        use_fn(&mut locations);
+        {
+            let locations = &mut self.locations.write().unwrap().locations;
+            use_fn(locations);
+        }
+        self.notify_about_db_update();
+    }
+
+    pub fn register_db_changed_callback(&mut self, callback: Callback<()>) {
+        {
+            let callbacks = &mut self.locations.write().unwrap().locations_changed_callbacks;
+            callbacks.push(callback);
+        }
     }
 }

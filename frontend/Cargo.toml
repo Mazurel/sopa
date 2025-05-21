@@ -30,7 +30,6 @@ yew = { version = "0.21.0", features = ["csr"] }
 getrandom = { version = "0.3.0", features = ["wasm_js"] }
 libsopa = { path = "../libsopa", features = ["wasm"] }
 deli = "0.2.0"
-wasm-bindgen-futures = "0.4.50"
 
 [dependencies.uuid]
 version = "1.12.1"

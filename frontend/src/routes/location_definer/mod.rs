@@ -70,9 +70,21 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
     {
         let locations_db = props.app_state.locations_db.clone();
         let locations_list = locations_list.clone();
-        // This effect is responsible for reloading locations list from DB
-        use_effect_with(locations_db, move |locations_db| {
-            locations_list.set(fetch_all_locations(locations_db));
+        // This effect is responsible for reloading locations list from DB.
+        // It is called once and registers DB callback.
+        use_effect_with((), move |_| {
+            let mut locations_db = (*locations_db).clone();
+            let locations_list = locations_list.clone();
+            let cb = {
+                let locations_db = locations_db.clone();
+                Callback::from(move |_| {
+                    info!("Refetching locations ...");
+                    let locations_list = locations_list.clone();
+                    let locations_db = locations_db.clone();
+                    locations_list.set(fetch_all_locations(&locations_db));
+                })
+            };
+            locations_db.register_db_changed_callback(cb);
         });
     }
 
@@ -88,13 +100,38 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                 let i: usize = **selected_location_index_state;
                 temp_locations_list[i] = (**selected_location_state).clone();
                 locations_list.set(temp_locations_list);
-                info!("Updated list!");
             },
         );
     }
 
-    let location_edit_manager =
-        LocationEditManager::init(props.app_state.clone(), selected_location_state.clone());
+    let on_current_location_removed = {
+        let locations_db = props.app_state.locations_db.clone();
+        let locations_list = locations_list.clone();
+        let selected_location_state = selected_location_state.clone();
+        let selected_location_index_state = selected_location_index_state.clone();
+        Callback::from(move |_| {
+            let locations_db = locations_db.clone();
+            let mut locations = (*locations_db).clone();
+            let locations_list = locations_list.clone();
+            let new_idx = match *selected_location_index_state <= 0 {
+                false => *selected_location_index_state + 1,
+                true => 0,
+            };
+            let selected_location = (*selected_location_state).clone();
+            selected_location_index_state.set(new_idx);
+            selected_location_state.set(locations_list[new_idx].clone());
+            locations.use_locations_mut(move |locations| {
+                locations.remove(selected_location);
+            });
+            locations_db.set(locations);
+        })
+    };
+
+    let location_edit_manager = LocationEditManager::init(
+        props.app_state.clone(),
+        selected_location_state.clone(),
+        on_current_location_removed.clone(),
+    );
 
     let on_new_location_request_cb = {
         let location_edit_manager = location_edit_manager.clone();

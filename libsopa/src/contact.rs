@@ -18,16 +18,39 @@ along with this program; if not, see
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Clone, Eq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Copy, Clone, Eq, Deserialize, Serialize)]
 pub enum ContactType {
-    PhoneNumber(String),
-    Email(String),
-    WebAddress(String),
+    PhoneNumber,
+    Email,
+    WebAddress,
+}
+
+impl ContactType {
+    pub fn to_string(&self) -> String {
+        let str_version = match &self {
+            ContactType::PhoneNumber => t!("contact-type-phone-number"),
+            ContactType::Email => t!("contact-type-email"),
+            ContactType::WebAddress => t!("contact-type-web-address"),
+        };
+        str_version.to_string()
+    }
+}
+
+impl Default for ContactType {
+    fn default() -> Self {
+        ContactType::Email
+    }
+}
+
+#[derive(Debug, PartialEq, Clone, Eq, Deserialize, Serialize)]
+pub struct Contact {
+    pub contact_type: ContactType,
+    pub value: String,
 }
 
 #[derive(Debug, PartialEq, Clone, Eq, Deserialize, Serialize)]
 pub struct ContactMethods {
-    methods: Vec<ContactType>,
+    methods: Vec<Contact>,
 }
 
 impl Default for ContactMethods {
@@ -39,11 +62,18 @@ impl Default for ContactMethods {
 }
 
 impl ContactMethods {
-    pub fn all_contact_methods<'a>(&'a self) -> &'a Vec<ContactType> {
+    pub fn all_contact_methods<'a>(&'a self) -> &'a Vec<Contact> {
         &self.methods
     }
+    pub fn all_contact_methods_mut<'a>(&'a mut self) -> &'a mut Vec<Contact> {
+        &mut self.methods
+    }
 
-    pub fn add_new_contact_method(&mut self, method: ContactType) {
+    pub fn add_new_contact_method(&mut self, method: Contact) {
         self.methods.push(method);
+    }
+
+    pub fn len(&self) -> usize {
+        self.methods.len()
     }
 }

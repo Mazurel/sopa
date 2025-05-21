@@ -29,6 +29,9 @@ location-definer-button-reset:
 location-definer-button-save:
   en: "Save changes"
   pl: "Zapisz zmiany"
+location-definer-button-remove:
+  en: "Remove"
+  pl: "Usuń"
 location-definer-load-label:
   en: "Load database"
   pl: "Wczytaj bazę"

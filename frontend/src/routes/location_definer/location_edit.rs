@@ -19,6 +19,7 @@ along with this program; if not, see
 use super::location_edit_manager::LocationEditManager;
 use super::tags_selection::TagsSelectionEditForLocation;
 use crate::yew_components::ContactMethodsEdit;
+use libsopa::contact::ContactMethods;
 use libsopa::locations::Location;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -40,7 +41,7 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
     let location_definer_tags_label = t!("location-definer-tags-label");
     let location_definer_button_save = t!("location-definer-button-save");
     let location_definer_button_reset = t!("location-definer-button-reset");
-    // let location_definer_button_exit = t!("location-definer-button-exit");
+    let location_definer_button_remove = t!("location-definer-button-remove");
 
     let change_title: Callback<_> = {
         let location_edit_manager = props.location_edit_manager.clone();
@@ -66,6 +67,15 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
         })
     };
 
+    let change_contact_methods: Callback<ContactMethods> = {
+        let location_edit_manager = props.location_edit_manager.clone();
+        Callback::from(move |new_contact_methods| {
+            let mut location = location_edit_manager.get_location_under_edit();
+            location.contact_methods = new_contact_methods;
+            location_edit_manager.stage_location_changes(location);
+        })
+    };
+
     let button_save_on_click: Callback<MouseEvent> = {
         let location_edit_manager = props.location_edit_manager.clone();
         Callback::from(move |_| {
@@ -77,6 +87,13 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
         let location_edit_manager = props.location_edit_manager.clone();
         Callback::from(move |_| {
             location_edit_manager.clear_location_changes();
+        })
+    };
+
+    let button_remove_on_click: Callback<MouseEvent> = {
+        let location_edit_manager = props.location_edit_manager.clone();
+        Callback::from(move |_| {
+            location_edit_manager.remove_current_location();
         })
     };
 
@@ -111,7 +128,7 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
                         />
                 </div>
             </div>
-            <ContactMethodsEdit methods={location_to_edit.contact_methods.clone()}/>
+            <ContactMethodsEdit methods={location_to_edit.contact_methods.clone()} on_methods_changed={change_contact_methods}/>
             <div class="field">
                 <div class="label">{location_definer_tags_label}</div>
                 <div class="control">
@@ -129,14 +146,11 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
                         {location_definer_button_reset}
                     </button>
                 </div>
-                /* TODO: When new location is registered, only then this button is to be used */
-                /*
                 <div class="control">
-                    <button class="button is-danger is-light">
-                        {location_definer_button_exit}
+                    <button class="button is-danger is-light" onclick={button_remove_on_click}>
+                        {location_definer_button_remove}
                     </button>
                 </div>
-                */
             </div>
         </>
     )

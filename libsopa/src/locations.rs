@@ -187,6 +187,10 @@ impl Locations {
         self.push_new(|_| {})
     }
 
+    pub fn remove(&mut self, location: Location) {
+        self.locations.remove(&location.get_id());
+    }
+
     pub fn to_bin_data(&self) -> Vec<u8> {
         bson::to_vec(self).unwrap()
     }

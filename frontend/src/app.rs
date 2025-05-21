@@ -30,8 +30,7 @@ pub struct SharedAppState {
 #[function_component(App)]
 pub fn app() -> Html {
     let selected_route: UseStateHandle<Option<Route>> = use_state(|| None);
-    let refresh_app = use_force_update();
-    let locations_db = use_state(move || LocationsDatabase::load_default_database(refresh_app));
+    let locations_db = use_state(move || LocationsDatabase::load_default_database());
     let shared_app_state = use_state(|| SharedAppState { locations_db });
 
     let on_view_content_update = {

@@ -1,0 +1,19 @@
+_version: 2
+contact-type-email:
+  en: Email
+  pl: Adres Email
+contact-type-phone-number:
+  en: Phone Number
+  pl: Numer telefonu
+contact-type-web-address:
+  en: Web Address
+  pl: Adres Internetowy
+contacts-edit-add-contact:
+  en: Add contact
+  pl: Dodaj kontakt
+contacts-edit-menu-title:
+  en: Contact
+  pl: Kontakt
+contacts-edit-value-label:
+  en: data
+  pl: dane
