@@ -1,7 +1,12 @@
 @use "sass:color";
 // Load Bulma's base styles and themes (including the minireset)
 @use "../third_party/bulma/sass" with (
-    $family-primary: '"Red Hat Text", "Lato", sans-serif'
+    $family-primary: '"Red Hat Text", "Lato", sans-serif',
+    $primary: #4c956c,
+    $white: #ffffff,
+    $grey: #1e212b,
+    $yellow: #d8a64e,
+    $cyan: #00a7e1
 );
 @use "../third_party/bulma/sass/utilities/mixins";
 @use "../third_party/bulma/sass/utilities/initial-variables" as bulma_vars;

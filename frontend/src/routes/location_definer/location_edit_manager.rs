@@ -91,18 +91,25 @@ impl LocationEditManager {
             let selected_location = selected_location.clone();
             let locations_db: UseStateHandle<_> = app_state.locations_db.clone();
             Callback::from(move |_| {
-                locations_db.use_locations(|locations| {
-                    if let Some(clean_location) = locations.fetch_update(&selected_location) {
-                        selected_location.set(clean_location);
-                    }
-                });
+                let confirm_location_cleared = t!("location-definer-confirm-location-cleared");
+                if gloo::dialogs::confirm(&confirm_location_cleared) {
+                    locations_db.use_locations(|locations| {
+                        if let Some(clean_location) = locations.fetch_update(&selected_location) {
+                            selected_location.set(clean_location);
+                        }
+                    });
+                }
             })
         };
 
         let remove_current_location_cb = {
             Callback::from(move |_| {
-                let on_current_location_removed = on_current_location_removed.clone();
-                on_current_location_removed.emit(());
+                let confirm_location_removed = t!("location-definer-confirm-location-removed");
+
+                if gloo::dialogs::confirm(&confirm_location_removed) {
+                    let on_current_location_removed = on_current_location_removed.clone();
+                    on_current_location_removed.emit(());
+                }
             })
         };
 
