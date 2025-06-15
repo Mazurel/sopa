@@ -1,6 +1,6 @@
 @use "sass:color";
 // Load Bulma's base styles and themes (including the minireset)
-@use "../third_party/bulma/sass" with (
+@use "third_party/bulma/sass" with (
     $family-primary: '"Red Hat Text", "Lato", sans-serif',
     $primary: #4c956c,
     $white: #ffffff,
@@ -8,15 +8,15 @@
     $yellow: #d8a64e,
     $cyan: #00a7e1
 );
-@use "../third_party/bulma/sass/utilities/mixins";
-@use "../third_party/bulma/sass/utilities/initial-variables" as bulma_vars;
+@use "third_party/bulma/sass/utilities/mixins";
+@use "third_party/bulma/sass/utilities/initial-variables" as bulma_vars;
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Limelight&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap");
 
 // Font Awesome 5
 $fa-font-path: "./webfonts";
-@import "../third_party/fontawesome/scss/fontawesome.scss";
-@import "../third_party/fontawesome/scss/solid.scss";
+@import "third_party/fontawesome/scss/fontawesome.scss";
+@import "third_party/fontawesome/scss/solid.scss";
 
 .is-logo-font {
     font-family: "Limelight", serif;
