@@ -1,0 +1,7 @@
+_version: 2
+download-error:
+  en: Error downloading file
+  pl: Błąd podczas pobierania pliku
+download-ok:
+  en: File downloaded successfully
+  pl: Plik został pomyślnie pobrany

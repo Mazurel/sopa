@@ -102,6 +102,7 @@ impl NotificationManager {
         self.notify(notification_content, NotificationType::Error);
     }
 
+    #[allow(unused)]
     pub fn notify_warning<Msg: Into<String>>(&self, notification_content: Msg) {
         self.notify(notification_content, NotificationType::Warning);
     }

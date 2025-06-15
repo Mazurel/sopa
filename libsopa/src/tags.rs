@@ -67,6 +67,12 @@ pub fn get_all_supported_tags() -> Vec<Tag> {
         .collect()
 }
 
+pub fn get_all_supported_tags_in_order() -> Vec<Tag> {
+    let mut all_tags = get_all_supported_tags();
+    all_tags.sort_by_key(|tag| tag.human_readable().to_lowercase());
+    all_tags
+}
+
 impl FromStr for Tag {
     type Err = ();
 
@@ -117,6 +123,12 @@ impl Tags {
 
     pub fn get_all_tags(&self) -> Vec<&Tag> {
         self.tags.iter().collect()
+    }
+
+    pub fn get_all_tags_in_order(&self) -> Vec<&Tag> {
+        let mut tags = self.tags.iter().collect::<Vec<_>>();
+        tags.sort_by_key(|tag| tag.human_readable().to_lowercase());
+        tags
     }
 
     pub fn define_tag<Str: ToString>(&mut self, tag: Str) -> Tag {

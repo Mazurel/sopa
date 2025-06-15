@@ -129,7 +129,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
 
     let interactive_tags = props
         .tags
-        .get_all_tags()
+        .get_all_tags_in_order()
         .into_iter()
         .map(|tag| {
             let selected_tags_state = selected_tags_state.clone();

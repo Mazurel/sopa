@@ -85,7 +85,9 @@ pub fn location_finder(props: &LocationFinderProps) -> Html {
         })
     };
 
-    let tags = use_memo((), |_| Tags::from(libsopa::tags::get_all_supported_tags()));
+    let tags = use_memo((), |_| {
+        Tags::from(libsopa::tags::get_all_supported_tags_in_order())
+    });
 
     html! {
         <div class="container">

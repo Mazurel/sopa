@@ -40,7 +40,7 @@ pub struct LocationViewProps {
 
 fn get_matching_tags(all_tags: &Tags, my_tags: &Tags) -> Vec<Html> {
     my_tags
-        .get_all_tags()
+        .get_all_tags_in_order()
         .iter()
         .map(|t| {
             let selection_type = match all_tags.has_tag(*t) {

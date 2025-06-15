@@ -44,3 +44,6 @@ location-definer-confirm-location-cleared:
 location-definer-confirm-location-removed:
   en: Are you sure you want to remove the location?
   pl: Czy na pewno chcesz usunąć placówkę?
+location-definer-commited-changes:
+  en: Location defined successfully
+  pl: Lokalizacja została pomyślnie zdefiniowana
