@@ -16,22 +16,41 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use log::*;
+use std::collections::HashMap;
+
 use yew::prelude::*;
 
 use crate::locations::LocationsDatabase;
 use crate::navigation::{NavigationBar, Route};
+use crate::notifications::NotificationManager;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct SharedAppState {
     pub locations_db: UseStateHandle<LocationsDatabase>,
+    pub notifications: NotificationManager,
 }
 
 #[function_component(App)]
 pub fn app() -> Html {
     let selected_route: UseStateHandle<Option<Route>> = use_state(|| None);
     let locations_db = use_state(move || LocationsDatabase::load_default_database());
-    let shared_app_state = use_state(|| SharedAppState { locations_db });
+
+    let notifications = use_state(|| HashMap::new());
+
+    let shared_app_state = {
+        let notifications_counter = use_state(|| 0);
+        let notifications = notifications.clone();
+        use_state(move || {
+            let notification_manager = NotificationManager {
+                notifications,
+                notifications_counter,
+            };
+            SharedAppState {
+                locations_db,
+                notifications: notification_manager,
+            }
+        })
+    };
 
     let on_view_content_update = {
         let selected_route = selected_route.clone();
@@ -56,6 +75,16 @@ pub fn app() -> Html {
             </div>
             <div class="container">
                 {view_content}
+            </div>
+            <div id="notification-container" class="container">
+                {
+                    (*notifications)
+                        .clone()
+                        .into_iter()
+                        .map(|(_, notification)| {
+                            notification
+                        }).collect::<Vec<_>>()
+                }
             </div>
         </div>
     }

@@ -152,14 +152,19 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
 
     let on_db_save_request_cb = {
         let locations_db = props.app_state.locations_db.clone();
+        let notifications = props.app_state.notifications.clone();
         Callback::from(move |_: MouseEvent| {
+            let notifications = notifications.clone();
             let mut locations_db = locations_db.deref().clone();
-            locations_db.use_locations_mut(move |locations| {
+            locations_db.use_locations_mut(|locations| {
                 let binary_db = locations.to_bin_data();
                 let binary_db_reference: &[u8] = &binary_db;
-                // TODO: Add notification when notification system will be ready
-                download_binary_data(binary_db_reference, "sopa.bson", "application/bson")
-                    .expect("Download should succeed");
+                match download_binary_data(binary_db_reference, "sopa.bson", "application/bson") {
+                    Ok(()) => notifications.notify_info(t!("download-ok")),
+                    Err(err_msg) => {
+                        notifications.notify_error(format!("{}: {}", t!("download-error"), err_msg))
+                    }
+                }
             });
         })
     };

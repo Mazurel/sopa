@@ -52,6 +52,18 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
     border: $selected_border_width solid bulma_vars.$green;
 }
 
+#notification-container {
+    position: fixed;
+    left: 2rem;
+    bottom: 2rem;
+    width: 20rem;
+
+    @include mixins.touch {
+        right: 1rem;
+        bottom: 1rem;
+    }
+}
+
 // Global transition setting
 * {
     transition: 377ms;

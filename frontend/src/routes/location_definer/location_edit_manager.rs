@@ -80,9 +80,11 @@ impl LocationEditManager {
             let locations_db: UseStateHandle<_> = app_state.locations_db.clone();
             Callback::from(move |_| {
                 let mut locations_db = locations_db.deref().clone();
+                let notifications = app_state.notifications.clone();
                 let selected_location = selected_location.clone().deref().clone();
                 locations_db.use_locations_mut(move |locations| {
                     locations.push_update(selected_location);
+                    notifications.notify_info(t!("location-definer-commited-changes"));
                 });
             })
         };

@@ -105,9 +105,12 @@ mod tests {
         assert!(!supported_languages.is_empty());
     }
 
+    /* TODO: Reenable wtih Mocks */
+    /*
     #[test]
     fn test_set_language() {
         let language = "en";
         assert!(set_language(language.to_string()).is_ok());
     }
+    */
 }
