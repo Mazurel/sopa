@@ -20,6 +20,7 @@ use std::collections::HashMap;
 
 use yew::prelude::*;
 
+use crate::footer::Footer;
 use crate::locations::LocationsDatabase;
 use crate::navigation::{NavigationBar, Route};
 use crate::notifications::NotificationManager;
@@ -86,6 +87,7 @@ pub fn app() -> Html {
                         }).collect::<Vec<_>>()
                 }
             </div>
+            <Footer/>
         </div>
     }
 }

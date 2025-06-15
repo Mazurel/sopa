@@ -64,6 +64,10 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
     }
 }
 
+.footer {
+    margin-top: 10rem;
+}
+
 // Global transition setting
 * {
     transition: 377ms;

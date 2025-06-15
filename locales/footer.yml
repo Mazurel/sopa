@@ -1,0 +1,10 @@
+_version: 2
+footer-copyright:
+  en: " - Copyright © 2025 Mateusz Mazur (Mazurel)"
+  pl: " - Prawa autorskie © 2025 Mateusz Mazur (Mazurel)"
+footer-license-text:
+  en: "This program is free software licensed under the"
+  pl: "Ten program jest wolnym oprogramowaniem na licencji"
+footer-license-link:
+  en: "GNU General Public License v2"
+  pl: "GNU General Public License v2"

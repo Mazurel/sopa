@@ -20,6 +20,7 @@ use app::App;
 
 mod app;
 mod download;
+mod footer;
 mod language;
 mod locations;
 mod navigation;
