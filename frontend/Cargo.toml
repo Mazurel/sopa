@@ -22,8 +22,10 @@ web-sys = { version = "0.3.76", features = [
     "Url",
     "HtmlAnchorElement",
     "Document",
+    "HtmlDocument",
     "HtmlElement",
     "Window",
+    "Navigator",
 ] }
 yew = { version = "0.21.0", features = ["csr"] }
 # NOTE: Random by default doesn't support browser JS

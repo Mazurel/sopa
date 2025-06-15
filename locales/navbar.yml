@@ -11,3 +11,6 @@ navbar:location-definer:
 navbar:main-page:
   en: Welcome
   pl: Powitanie
+navigation-bar-language-selection:
+  en: Language
+  pl: Język

@@ -25,27 +25,20 @@ pub fn main_page() -> Html {
             <section class="hero is-medium is-primary  is-logo-font">
                 <div class="hero-body">
                     <h1 class="block is-size-1 has-text-centered has-text-weight-bold">
-                        {"Witaj w SOP Aphia"}
+                        {t!("main-page:welcome-title")}
                     </h1>
                 </div>
             </section>
             <section class="hero is-small is-info mt-2">
                 <div class="hero-body">
                     <p class="block is-size-4 has-text-centered">
-                    {"
-                        Cieszę się, że tu jesteś.
-                        SOPa Aphia, to wersja demo Systemu Ośrodków Pomocy przygotowana na potrzeby Ośrodka Interwencji Kryzysowej w Gdyni.
-                    "}
+                        {t!("main-page:welcome-message")}
                     </p>
                     <p class="block is-size-4 has-text-centered">
-                    {"
-                        Niezależnie z jakim wyzwaniem się mierzysz, zostałem stworzony, aby pomóc ci zrobić pierwszy krok w stronę zmiany.
-                    "}
+                        {t!("main-page:help-message")}
                     </p>
                     <p class="block is-size-4 has-text-centered">
-                    {"
-                        Znajdź wsparcie, którego potrzebujesz i odkryj, że nie jesteś sam.
-                    "}
+                        {t!("main-page:support-message")}
                     </p>
                 </div>
             </section>

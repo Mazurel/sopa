@@ -15,8 +15,8 @@
 
 // Font Awesome 5
 $fa-font-path: "./webfonts";
-@import "./fontawesome/scss/fontawesome.scss";
-@import "./fontawesome/scss/solid.scss";
+@import "../third_party/fontawesome/scss/fontawesome.scss";
+@import "../third_party/fontawesome/scss/solid.scss";
 
 .is-logo-font {
     font-family: "Limelight", serif;

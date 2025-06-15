@@ -20,6 +20,7 @@ use log::info;
 use std::borrow::Cow;
 
 use crate::app::SharedAppState;
+use crate::language;
 use crate::routes::{
     about::AboutPage, location_definer::LocationDefiner, location_finder::LocationFinder,
     main_page::MainPage,
@@ -103,6 +104,47 @@ fn naventry(props: &NavigationEntryProps) -> Html {
 }
 
 #[derive(Properties, PartialEq)]
+pub struct LanguageSelectionNavigationEntryProps {
+    pub reload_ui_cb: Callback<()>,
+}
+
+#[function_component(LanguageSelectionNavigationEntry)]
+pub fn language_selection_navigation_entry(props: &LanguageSelectionNavigationEntryProps) -> Html {
+    let supported_languages = language::list_supported_languages();
+    let reload_ui_cb = props.reload_ui_cb.clone();
+    let supported_languages_elements = supported_languages
+        .iter()
+        .map(|language| {
+            let reload_ui_cb = reload_ui_cb.clone();
+            let language = language.clone();
+            let lang_string = language.to_uppercase();
+            let emoji = language::get_emoji_for_language(language.as_str());
+            let onclick = Callback::from(move |_| {
+                let _ = language::set_language(language.clone());
+                reload_ui_cb.emit(());
+            });
+
+            html!(
+                <a class="navbar-item is-hoverable" {onclick}>
+                    {format!("{} {}", emoji, lang_string)}
+                </a>
+            )
+        })
+        .collect::<Vec<_>>();
+
+    html!(
+        <a class="navbar-item is-info has-text-weight-normal is-hoverable has-dropdown">
+            <a class="navbar-link">
+                {t!("navigation-bar-language-selection")}
+            </a>
+            <div class="navbar-dropdown">
+                {supported_languages_elements}
+            </div>
+        </a>
+    )
+}
+
+#[derive(Properties, PartialEq)]
 pub struct NavigationBarProps {
     pub on_view_content_update: Callback<Route>,
     pub shared_app_state: SharedAppState,
@@ -112,8 +154,13 @@ pub struct NavigationBar {
     route: Route,
 }
 
+pub enum NavigationMessage {
+    ChangeRoute(Route),
+    ReloadUI,
+}
+
 impl Component for NavigationBar {
-    type Message = Route;
+    type Message = NavigationMessage;
     type Properties = NavigationBarProps;
 
     fn create(_ctx: &Context<Self>) -> Self {
@@ -131,15 +178,16 @@ impl Component for NavigationBar {
             let html_entry = html!(
                 <NavigationEntry
                     route={entry}
-                    on_selection={ctx.link().callback(|route| {
-                        info!("New navigation route: {route:?}");
-                        route
-                    })}
+                    on_selection={ctx.link().callback(|route| { NavigationMessage::ChangeRoute(route) })}
                     {is_selected}
                 />
             );
             navbar_entries.push(html_entry);
         }
+
+        // Add last entry representing selection of language
+        let reload_ui_cb = ctx.link().callback(move |_| NavigationMessage::ReloadUI);
+        navbar_entries.push(html!(<LanguageSelectionNavigationEntry {reload_ui_cb} />));
 
         html!(
             <div class="">
@@ -174,14 +222,24 @@ impl Component for NavigationBar {
         }
     }
 
-    fn update(&mut self, ctx: &Context<Self>, route: Route) -> bool {
-        if self.route != route {
-            self.route = route;
-            let props = ctx.props();
-            props.on_view_content_update.emit(self.route.clone());
-            true
-        } else {
-            false
+    fn update(&mut self, ctx: &Context<Self>, message: NavigationMessage) -> bool {
+        match message {
+            NavigationMessage::ReloadUI => {
+                info!("Reloading UI");
+                let props = ctx.props();
+                props.on_view_content_update.emit(self.route.clone());
+                true
+            }
+            NavigationMessage::ChangeRoute(route) => {
+                if self.route != route {
+                    self.route = route;
+                    let props = ctx.props();
+                    props.on_view_content_update.emit(self.route.clone());
+                    true
+                } else {
+                    false
+                }
+            }
         }
     }
 }

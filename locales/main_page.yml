@@ -1,0 +1,13 @@
+_version: 2
+main-page:welcome-title:
+  en: Welcome to SOP Aphia
+  pl: Witaj w SOP Aphia
+main-page:welcome-message:
+  en: I'm glad you're here. SOP Aphia is a demo version of the Support Centers System prepared for the Crisis Intervention Center in Gdynia.
+  pl: Cieszę się, że tu jesteś. SOP Aphia, to wersja demo Systemu Ośrodków Pomocy przygotowana na potrzeby Ośrodka Interwencji Kryzysowej w Gdyni.
+main-page:help-message:
+  en: Regardless of what challenge you're facing, I was created to help you take the first step towards change.
+  pl: Niezależnie z jakim wyzwaniem się mierzysz, zostałem stworzony, aby pomóc ci zrobić pierwszy krok w stronę zmiany.
+main-page:support-message:
+  en: Find the support you need and discover that you are not alone.
+  pl: Znajdź wsparcie, którego potrzebujesz i odkryj, że nie jesteś sam.

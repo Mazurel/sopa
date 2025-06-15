@@ -20,8 +20,10 @@ use app::App;
 
 mod app;
 mod download;
+mod language;
 mod locations;
 mod navigation;
+mod notifications;
 mod routes;
 mod window_location;
 mod yew_components;
@@ -34,6 +36,6 @@ i18n!("../locales");
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
-    rust_i18n::set_locale("pl");
+    language::init_language_settings();
     yew::Renderer::<App>::new().render();
 }

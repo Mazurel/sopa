@@ -38,3 +38,9 @@ location-definer-load-label:
 location-definer-save-label:
   en: "Save database"
   pl: "Zapisz bazę"
+location-definer-confirm-location-cleared:
+  en: Are you sure you want to clear the location?
+  pl: Czy na pewno chcesz wyczyścić placówkę?
+location-definer-confirm-location-removed:
+  en: Are you sure you want to remove the location?
+  pl: Czy na pewno chcesz usunąć placówkę?
