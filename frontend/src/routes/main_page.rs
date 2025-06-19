@@ -22,6 +22,18 @@ use yew::prelude::*;
 pub fn main_page() -> Html {
     html!(
         <>
+            <section class="hero is-small is-warning">
+                <div class="hero-body">
+                    <div class="notification is-warning has-text-centered">
+                        <p class="block is-size-5 has-text-weight-bold">
+                            {t!("main-page:alpha-warning-title")}
+                        </p>
+                        <p class="block is-size-6">
+                            {t!("main-page:alpha-warning-message")}
+                        </p>
+                    </div>
+                </div>
+            </section>
             <section class="hero is-medium is-primary  is-logo-font">
                 <div class="hero-body">
                     <h1 class="block is-size-1 has-text-centered has-text-weight-bold">

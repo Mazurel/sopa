@@ -11,3 +11,9 @@ main-page:help-message:
 main-page:support-message:
   en: Find the support you need and discover that you are not alone.
   pl: Znajdź wsparcie, którego potrzebujesz i odkryj, że nie jesteś sam.
+main-page:alpha-warning-title:
+  en: ⚠️ ALPHA SOFTWARE - WORK IN PROGRESS
+  pl: ⚠️ OPROGRAMOWANIE ALPHA - W TRAKCIE ROZWOJU
+main-page:alpha-warning-message:
+  en: This is early development software. Features may be incomplete, unstable, or subject to change. Use for testing and feedback purposes only.
+  pl: To oprogramowanie w wczesnej fazie rozwoju. Funkcje mogą być niekompletne, niestabilne lub mogą ulec zmianie. Używaj tylko do testów i przekazywania opinii.
