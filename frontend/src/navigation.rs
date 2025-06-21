@@ -105,6 +105,7 @@ fn naventry(props: &NavigationEntryProps) -> Html {
 
 #[derive(Properties, PartialEq)]
 pub struct LanguageSelectionNavigationEntryProps {
+    pub shared_app_state: SharedAppState,
     pub reload_ui_cb: Callback<()>,
 }
 
@@ -119,9 +120,16 @@ pub fn language_selection_navigation_entry(props: &LanguageSelectionNavigationEn
             let language = language.clone();
             let lang_string = language.to_uppercase();
             let emoji = language::get_emoji_for_language(language.as_str());
-            let onclick = Callback::from(move |_| {
-                let _ = language::set_language(language.clone());
-                reload_ui_cb.emit(());
+            let shared_app_state = props.shared_app_state.clone();
+            let onclick = Callback::from(move |_| match language::set_language(language.clone()) {
+                Ok(_) => {
+                    reload_ui_cb.emit(());
+                }
+                Err(err) => {
+                    shared_app_state
+                        .notifications
+                        .notify_error(format!("Failed to change language: {}", err));
+                }
             });
 
             html!(
@@ -171,6 +179,7 @@ impl Component for NavigationBar {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let mut navbar_entries: Vec<Html> = Vec::new();
+        let shared_app_state = ctx.props().shared_app_state.clone();
         navbar_entries.reserve(ALL_ROUTES.len());
 
         for entry in ALL_ROUTES {
@@ -187,7 +196,8 @@ impl Component for NavigationBar {
 
         // Add last entry representing selection of language
         let reload_ui_cb = ctx.link().callback(move |_| NavigationMessage::ReloadUI);
-        navbar_entries.push(html!(<LanguageSelectionNavigationEntry {reload_ui_cb} />));
+        navbar_entries
+            .push(html!(<LanguageSelectionNavigationEntry {reload_ui_cb} {shared_app_state}/>));
 
         html!(
             <div class="">

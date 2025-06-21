@@ -2,35 +2,21 @@ use gloo::utils::window;
 use wasm_bindgen::JsCast;
 use web_sys::HtmlDocument;
 
+use crate::cookies;
+
 const DEFAULT_LANGUAGE: &str = "en";
 
 // TODO: Add here error handling
 
-fn set_browser_language_setting_in_cookie(language: String) {
-    let cookie = format!("language={}", language);
-    window()
-        .document()
-        .expect("window.document")
-        .unchecked_into::<HtmlDocument>()
-        .set_cookie(&cookie)
-        .expect(format!("window.document.set_cookie({cookie})").as_str());
+fn set_browser_language_setting_in_cookie(language: &str) -> Result<(), String> {
+    cookies::set_cookie("language", language)
 }
 
 fn get_browser_language_setting_in_cookie() -> Option<String> {
-    let cookie = window()
-        .document()
-        .expect("window.document")
-        .unchecked_into::<HtmlDocument>()
-        .cookie()
-        .expect("window.document.cookie");
-    let parts: Vec<&str> = cookie.split(';').collect();
-    for part in parts {
-        let pair: Vec<&str> = part.split('=').collect();
-        if pair[0].trim() == "language" {
-            return Some(pair[1].to_string());
-        }
+    match cookies::get_cookie("language") {
+        Ok(language) => Some(language),
+        Err(_) => None,
     }
-    None
 }
 
 fn transform_browser_language(browser_language: String) -> String {
@@ -74,7 +60,7 @@ pub fn set_language(language: String) -> Result<(), String> {
     }
 
     rust_i18n::set_locale(&language);
-    set_browser_language_setting_in_cookie(language);
+    set_browser_language_setting_in_cookie(&language)?;
     Ok(())
 }
 
