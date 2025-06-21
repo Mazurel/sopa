@@ -106,24 +106,21 @@ fn naventry(props: &NavigationEntryProps) -> Html {
 #[derive(Properties, PartialEq)]
 pub struct LanguageSelectionNavigationEntryProps {
     pub shared_app_state: SharedAppState,
-    pub reload_ui_cb: Callback<()>,
 }
 
 #[function_component(LanguageSelectionNavigationEntry)]
 pub fn language_selection_navigation_entry(props: &LanguageSelectionNavigationEntryProps) -> Html {
     let supported_languages = language::list_supported_languages();
-    let reload_ui_cb = props.reload_ui_cb.clone();
     let supported_languages_elements = supported_languages
         .iter()
         .map(|language| {
-            let reload_ui_cb = reload_ui_cb.clone();
             let language = language.clone();
             let lang_string = language.to_uppercase();
             let emoji = language::get_emoji_for_language(language.as_str());
             let shared_app_state = props.shared_app_state.clone();
             let onclick = Callback::from(move |_| match language::set_language(language.clone()) {
                 Ok(_) => {
-                    reload_ui_cb.emit(());
+                    crate::app::reload();
                 }
                 Err(err) => {
                     shared_app_state
@@ -148,6 +145,54 @@ pub fn language_selection_navigation_entry(props: &LanguageSelectionNavigationEn
             <div class="navbar-dropdown">
                 {supported_languages_elements}
             </div>
+        </a>
+    )
+}
+
+#[derive(Properties, PartialEq)]
+pub struct ColorSchemeSelectionNavigationEntryProps {
+    pub shared_app_state: SharedAppState,
+}
+
+#[function_component(ColorSchemeSelectionNavigationEntry)]
+pub fn color_scheme_selection_navigation_entry(
+    props: &ColorSchemeSelectionNavigationEntryProps,
+) -> Html {
+    use crate::color_scheme::{get_current_color_scheme, set_current_color_scheme, ColorScheme};
+
+    let current_scheme = use_state(|| get_current_color_scheme());
+
+    let theme_icon = match *current_scheme {
+        ColorScheme::Light => "fa-sun",
+        ColorScheme::Dark => "fa-moon",
+    };
+
+    let icon_classes = classes!("fas", theme_icon);
+
+    let onclick = {
+        let shared_app_state = props.shared_app_state.clone();
+        let current_scheme = current_scheme.clone();
+        let target_scheme = match *current_scheme {
+            ColorScheme::Light => ColorScheme::Dark,
+            ColorScheme::Dark => ColorScheme::Light,
+        };
+        Callback::from(move |_| match set_current_color_scheme(target_scheme) {
+            Ok(_) => {
+                current_scheme.set(target_scheme);
+            }
+            Err(err) => {
+                shared_app_state
+                    .notifications
+                    .notify_error(format!("Failed to change color scheme: {}", err));
+            }
+        })
+    };
+
+    html!(
+        <a class="navbar-item is-info has-text-weight-normal is-hoverable p-3"  {onclick}>
+            <span class="icon">
+                <i class={icon_classes}></i>
+            </span>
         </a>
     )
 }
@@ -194,10 +239,16 @@ impl Component for NavigationBar {
             navbar_entries.push(html_entry);
         }
 
-        // Add last entry representing selection of language
-        let reload_ui_cb = ctx.link().callback(move |_| NavigationMessage::ReloadUI);
-        navbar_entries
-            .push(html!(<LanguageSelectionNavigationEntry {reload_ui_cb} {shared_app_state}/>));
+        // Add entry representing selection of language
+        {
+            let shared_app_state = shared_app_state.clone();
+            navbar_entries.push(html!(<LanguageSelectionNavigationEntry {shared_app_state}/>));
+        }
+        // Add entry representing selection of color scheme
+        {
+            let shared_app_state = shared_app_state.clone();
+            navbar_entries.push(html!(<ColorSchemeSelectionNavigationEntry {shared_app_state}/>));
+        }
 
         html!(
             <div class="">

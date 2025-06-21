@@ -16,14 +16,16 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
+use log;
 use std::collections::HashMap;
 
+use gloo::utils::window;
 use yew::prelude::*;
 
 use crate::footer::Footer;
 use crate::locations::LocationsDatabase;
-use crate::navigation::{NavigationBar, Route};
 use crate::notifications::NotificationManager;
+use crate::yew_components::navigation::{NavigationBar, Route};
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct SharedAppState {
@@ -89,5 +91,11 @@ pub fn app() -> Html {
             </div>
             <Footer/>
         </div>
+    }
+}
+
+pub fn reload() {
+    if let Err(err) = window().location().reload() {
+        log::error!("Failed to reload page: {:?}", err);
     }
 }

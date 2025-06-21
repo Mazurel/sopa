@@ -19,12 +19,12 @@ along with this program; if not, see
 use app::App;
 
 mod app;
+mod color_scheme;
 mod cookies;
 mod download;
 mod footer;
 mod language;
 mod locations;
-mod navigation;
 mod notifications;
 mod routes;
 mod window_location;
@@ -39,5 +39,6 @@ i18n!("../locales");
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
     language::init_language_settings();
+    color_scheme::init_color_scheme_system();
     yew::Renderer::<App>::new().render();
 }

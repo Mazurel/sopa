@@ -18,6 +18,7 @@ along with this program; if not, see
 
 mod contacts;
 mod locations;
+pub mod navigation;
 mod tags;
 
 pub use contacts::*;

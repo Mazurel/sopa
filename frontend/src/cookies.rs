@@ -3,9 +3,7 @@ use wasm_bindgen::JsCast;
 use web_sys::HtmlDocument;
 
 pub fn set_cookie(name: &str, value: &str) -> Result<(), String> {
-    let document = document();
-
-    let all_cookies = document
+    document()
         .unchecked_into::<HtmlDocument>()
         .set_cookie(&format!("{}={}", name, value))
         .map_err(|_| "Failed to set cookie".to_string())?;
@@ -14,9 +12,7 @@ pub fn set_cookie(name: &str, value: &str) -> Result<(), String> {
 }
 
 pub fn get_cookie(name: &str) -> Result<String, String> {
-    let document = document();
-
-    let all_cookies = document
+    let all_cookies = document()
         .unchecked_into::<HtmlDocument>()
         .cookie()
         .map_err(|_| "Failed to get cookie from document".to_string())?;
