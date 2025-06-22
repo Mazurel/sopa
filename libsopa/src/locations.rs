@@ -23,6 +23,42 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
+#[derive(Serialize, Deserialize, Hash, Debug, Clone, PartialEq, Eq)]
+pub enum Day {
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct TimePoint {
+    hour: u8,
+    minute: u8,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct TimeSpan {
+    from: TimePoint,
+    to: TimePoint,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct OpenedHours {
+    time_span_per_day: HashMap<Day, TimeSpan>,
+}
+
+impl Default for OpenedHours {
+    fn default() -> Self {
+        OpenedHours {
+            time_span_per_day: HashMap::new(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "wasm", derive(Model))]
 pub struct Location {
@@ -31,8 +67,15 @@ pub struct Location {
     pub name: String,
     pub tags: Tags,
     pub address: String,
+    #[serde(default)]
     pub description: String,
+    #[serde(default)]
     pub contact_methods: ContactMethods,
+    // NOTE: Starting from here fields are not backwards compatible :/
+    //       As a simple W/A for now we can use Serde default.
+    // TODO: Think of some better migration mechanism, like Diesel or something.
+    #[serde(default)]
+    pub opened_hours: OpenedHours,
 }
 
 impl Location {
@@ -50,6 +93,7 @@ impl Default for Location {
             address: String::from(""),
             description: String::from(""),
             contact_methods: ContactMethods::default(),
+            opened_hours: OpenedHours::default(),
         }
     }
 }
