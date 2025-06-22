@@ -1,5 +1,6 @@
 use web_sys::window;
 
+#[allow(unused)]
 pub fn read_window_path() -> Option<String> {
     let window = window()?;
     match window.location().pathname() {

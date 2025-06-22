@@ -1,6 +1,4 @@
 use gloo::utils::window;
-use wasm_bindgen::JsCast;
-use web_sys::HtmlDocument;
 
 use crate::cookies;
 

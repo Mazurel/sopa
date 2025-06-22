@@ -19,8 +19,6 @@ along with this program; if not, see
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
-use log::*;
-
 use libsopa::contact::{Contact, ContactMethods, ContactType};
 
 fn get_contact_fontawesome_icon(contact: ContactType) -> &'static str {

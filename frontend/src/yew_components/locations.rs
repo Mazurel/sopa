@@ -150,16 +150,16 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                     <LocationDescriptionView {description} />
                     <LocationAddressView address={location.address.clone()} />
                     <ContactMethodsView methods={location.contact_methods.clone()} />
-                }
-                if let Some(tag_elements) = tag_elements {
-                    <div class="card-content">
-                        <div class="component">
-                            {t!("location-tags-info").to_string()}
+                    if let Some(tag_elements) = tag_elements {
+                        <div class="card-content">
+                            <div class="component">
+                                {t!("location-tags-info").to_string()}
+                            </div>
+                            <div class="component">
+                                {tag_elements}
+                            </div>
                         </div>
-                        <div class="component">
-                            {tag_elements}
-                        </div>
-                    </div>
+                    }
                 }
             </div>
         </div>

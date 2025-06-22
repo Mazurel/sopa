@@ -33,6 +33,7 @@ pub enum Route {
     MainPage,
     LocationFinder,
     LocationDefiner,
+    #[allow(unused)]
     About,
 }
 
@@ -210,7 +211,6 @@ pub struct NavigationBar {
 
 pub enum NavigationMessage {
     ChangeRoute(Route),
-    ReloadUI,
 }
 
 impl Component for NavigationBar {
@@ -286,12 +286,6 @@ impl Component for NavigationBar {
 
     fn update(&mut self, ctx: &Context<Self>, message: NavigationMessage) -> bool {
         match message {
-            NavigationMessage::ReloadUI => {
-                info!("Reloading UI");
-                let props = ctx.props();
-                props.on_view_content_update.emit(self.route.clone());
-                true
-            }
             NavigationMessage::ChangeRoute(route) => {
                 if self.route != route {
                     self.route = route;
