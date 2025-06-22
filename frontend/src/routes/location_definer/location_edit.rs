@@ -21,7 +21,7 @@ use super::tags_selection::TagsSelectionEditForLocation;
 use crate::yew_components::ContactMethodsEdit;
 use libsopa::contact::ContactMethods;
 use libsopa::locations::Location;
-use web_sys::HtmlInputElement;
+use web_sys::{HtmlInputElement, HtmlTextAreaElement};
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
@@ -33,16 +33,6 @@ pub struct LocationEditProps {
 
 #[function_component(LocationEdit)]
 pub fn location_edit(props: &LocationEditProps) -> Html {
-    let location_definer_prompt = t!("location-definer-prompt");
-    let location_definer_title_label = t!("location-definer-title-label");
-    let location_definer_title_placeholder = t!("location-definer-title-placeholder");
-    let location_definer_address_label = t!("location-definer-address-label");
-    let location_definer_address_placeholder = t!("location-definer-address-placeholder");
-    let location_definer_tags_label = t!("location-definer-tags-label");
-    let location_definer_button_save = t!("location-definer-button-save");
-    let location_definer_button_reset = t!("location-definer-button-reset");
-    let location_definer_button_remove = t!("location-definer-button-remove");
-
     let change_title: Callback<_> = {
         let location_edit_manager = props.location_edit_manager.clone();
         Callback::from(move |event: Event| {
@@ -62,6 +52,18 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
             if let Some(input) = maybe_input_element {
                 let mut location = location_edit_manager.get_location_under_edit();
                 location.address = input.value();
+                location_edit_manager.stage_location_changes(location);
+            }
+        })
+    };
+
+    let change_description: Callback<_> = {
+        let location_edit_manager = props.location_edit_manager.clone();
+        Callback::from(move |event: InputEvent| {
+            let maybe_text_area_element = event.target_dyn_into::<HtmlTextAreaElement>();
+            if let Some(text_area) = maybe_text_area_element {
+                let mut location = location_edit_manager.get_location_under_edit();
+                location.description = text_area.value();
                 location_edit_manager.stage_location_changes(location);
             }
         })
@@ -98,39 +100,52 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
     };
 
     let location_to_edit = props.initial_location_to_edit.clone();
+    let description = location_to_edit.description.clone();
 
     html!(
         <>
             <div class="content">
-                <h2>{location_definer_prompt}</h2>
+                <h2>{t!("location-definer-prompt")}</h2>
             </div>
             <div class="field container is-max-tablet">
-                <div class="label">{location_definer_title_label}</div>
+                <div class="label">{t!("location-definer-title-label")}</div>
                 <div class="control">
                     <input
                         class={"input"}
                         type={"text"}
                         value={location_to_edit.name.clone()}
-                        placeholder={location_definer_title_placeholder}
+                        placeholder={t!("location-definer-title-placeholder")}
                         onchange={change_title}
                         />
                 </div>
             </div>
             <div class="field container is-max-tablet">
-                <div class="label">{location_definer_address_label}</div>
+                <div class="label">{t!("location-definer-description-label")}</div>
+                <div class="control">
+                    <textarea
+                        class="textarea"
+                        placeholder={t!("location-definer-description-placeholder")}
+                        value={description}
+                        oninput={change_description}>
+                        {description}
+                    </textarea>
+                </div>
+            </div>
+            <div class="field container is-max-tablet">
+                <div class="label">{t!("location-definer-address-label")}</div>
                 <div class="control">
                     <input
                         class={"input"}
                         type={"text"}
                         value={location_to_edit.address.clone()}
-                        placeholder={location_definer_address_placeholder}
+                        placeholder={t!("location-definer-address-placeholder")}
                         onchange={change_address}
                         />
                 </div>
             </div>
             <ContactMethodsEdit methods={location_to_edit.contact_methods.clone()} on_methods_changed={change_contact_methods}/>
             <div class="field">
-                <div class="label">{location_definer_tags_label}</div>
+                <div class="label">{t!("location-definer-tags-label")}</div>
                 <div class="control">
                     <TagsSelectionEditForLocation location={location_to_edit.clone()} location_edit_manager={props.location_edit_manager.clone()}/>
                 </div>
@@ -138,17 +153,17 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
             <div class="field has-addons mt-5">
                 <div class="control">
                     <button class="button is-link is-light" onclick={button_save_on_click}>
-                        {location_definer_button_save}
+                        {t!("location-definer-button-save")}
                     </button>
                 </div>
                 <div class="control">
                     <button class="button is-warning is-light" onclick={button_clear_on_click}>
-                        {location_definer_button_reset}
+                        {t!("location-definer-button-reset")}
                     </button>
                 </div>
                 <div class="control">
                     <button class="button is-danger is-light" onclick={button_remove_on_click}>
-                        {location_definer_button_remove}
+                        {t!("location-definer-button-remove")}
                     </button>
                 </div>
             </div>

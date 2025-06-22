@@ -21,6 +21,52 @@ use libsopa::locations::Location;
 use libsopa::tags::Tags;
 use yew::prelude::*;
 
+#[derive(Clone, PartialEq, Properties)]
+pub struct LocationDescriptionViewProps {
+    description: String,
+}
+
+#[function_component(LocationDescriptionView)]
+pub fn location_description_view(props: &LocationDescriptionViewProps) -> Html {
+    let description = props.description.trim_end();
+    let is_description_empty = description.is_empty();
+    let style = "white-space: pre-wrap; text-indent: 0 each-line;";
+
+    html!(
+        if !is_description_empty {
+            <div class="block ml-6 mt-2">
+                <span class="p-5" {style}>
+                    <p>
+                        { description }
+                    </p>
+                </span>
+            </div>
+        }
+    )
+}
+
+#[derive(Clone, PartialEq, Properties)]
+pub struct LocationAddressViewProps {
+    address: String,
+}
+
+#[function_component(LocationAddressView)]
+pub fn location_address_view(props: &LocationAddressViewProps) -> Html {
+    let address = props.address.trim();
+    let is_address_empty = address.is_empty();
+
+    html!(
+        if !is_address_empty {
+            <div class="icon-text ml-6 mt-2">
+              <span class="icon has-text-info">
+                <i class="fas fa-home"></i>
+              </span>
+              <span>{address}</span>
+            </div>
+        }
+    )
+}
+
 #[derive(Clone, PartialEq)]
 pub struct SelectionSettings {
     pub selection_cb: Callback<Location>,
@@ -60,6 +106,7 @@ fn get_matching_tags(all_tags: &Tags, my_tags: &Tags) -> Vec<Html> {
 #[function_component(LocationView)]
 pub fn location_view(props: &LocationViewProps) -> Html {
     let location = &props.location;
+    let description = location.description.clone();
     let is_selectable = props.selection_settings.is_some();
 
     let tag_elements = match &props.global_selected_tags {
@@ -91,8 +138,6 @@ pub fn location_view(props: &LocationViewProps) -> Html {
         }
     }
 
-    let is_address_defined = location.address.len() > 0;
-
     html!(
         <div class={wrapper_classes} {onclick}>
             <div class="card">
@@ -102,14 +147,8 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                     </div>
                 </div>
                 if !props.simplified_view {
-                    if is_address_defined {
-                        <div class="icon-text ml-6 mt-2">
-                          <span class="icon has-text-info">
-                            <i class="fas fa-home"></i>
-                          </span>
-                          <span>{location.address.clone()}</span>
-                        </div>
-                    }
+                    <LocationDescriptionView {description} />
+                    <LocationAddressView address={location.address.clone()} />
                     <ContactMethodsView methods={location.contact_methods.clone()} />
                 }
                 if let Some(tag_elements) = tag_elements {

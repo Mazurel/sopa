@@ -47,3 +47,9 @@ location-definer-confirm-location-removed:
 location-definer-commited-changes:
   en: Location defined successfully
   pl: Lokalizacja została pomyślnie zdefiniowana
+location-definer-description-label:
+  en: Description
+  pl: Opis
+location-definer-description-placeholder:
+  en: Type description here
+  pl: Wpisz tutaj opis

@@ -44,7 +44,7 @@ pub fn contact_view(props: &ContactViewProps) -> Html {
 
     let icon_class = classes!(["fas", contact_view_fontawesome_icon,]);
     html!(
-        <div class="icon-text ml-2 mt-2 mb-1">
+        <div class="icon-text ml-6 mt-2 mb-1">
           <span class="icon has-text-info">
             <i class={icon_class}></i>
           </span>

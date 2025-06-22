@@ -59,11 +59,12 @@ impl Route {
     }
 }
 
-static ALL_ROUTES: [Route; 4] = [
+static ALL_ROUTES: [Route; 3] = [
     Route::MainPage,
     Route::LocationFinder,
     Route::LocationDefiner,
-    Route::About,
+    // TODO: Modernize ABOUT page
+    // Route::About,
 ];
 
 #[derive(Properties, PartialEq)]
