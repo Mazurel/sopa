@@ -36,9 +36,28 @@ pub struct ContactViewProps {
 
 #[function_component(ContactView)]
 pub fn contact_view(props: &ContactViewProps) -> Html {
+    let ContactViewProps { contact } = props;
     let contact_view_fontawesome_icon = get_contact_fontawesome_icon(props.contact.contact_type);
 
-    let contact_view_content = props.contact.value.clone();
+    let contact_view_actual = {
+        match contact.contact_type {
+            ContactType::WebAddress => {
+                let href = format!("{}", contact.value.clone());
+                html!(
+                    <a {href} target="blank">{contact.value.clone()}</a>
+                )
+            }
+            ContactType::Email => {
+                let href = format!("mailto:{}", contact.value.clone());
+                html!(
+                    <a {href}>{contact.value.clone()}</a>
+                )
+            }
+            _ => html!(
+                <span>{contact.value.clone()}</span>
+            ),
+        }
+    };
 
     let icon_class = classes!(["fas", contact_view_fontawesome_icon,]);
     html!(
@@ -46,7 +65,7 @@ pub fn contact_view(props: &ContactViewProps) -> Html {
           <span class="icon has-text-info">
             <i class={icon_class}></i>
           </span>
-          <span>{contact_view_content}</span>
+          {contact_view_actual}
         </div>
     )
 }

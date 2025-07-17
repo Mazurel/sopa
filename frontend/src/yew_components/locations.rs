@@ -142,7 +142,7 @@ pub fn location_view(props: &LocationViewProps) -> Html {
         <div class={wrapper_classes} {onclick}>
             <div class="card">
                 <div class="card-header">
-                    <div class="card-header-title has-background-info has-text-dark is-size-4 is-capitalized has-text-centered">
+                    <div class="card-header-title has-background-info has-text-dark is-size-4 is-capitalized">
                         {location.name.clone()}
                     </div>
                 </div>
