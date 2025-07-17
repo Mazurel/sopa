@@ -226,10 +226,10 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                 </button>
             </div>
             <div class="columns">
-                <div class="column is-one-third">
+                <div style="height: 75em; overflow: scroll" class="column is-one-third">
                     { all_locations_view }
                 </div>
-                <div class="column box is-two-thirds">
+                <div style="height: min-content" class="column box is-two-thirds">
                     <LocationEdit initial_location_to_edit={selected_location} {location_edit_manager}/>
                 </div>
             </div>
