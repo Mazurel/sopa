@@ -16,12 +16,29 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-mod contacts;
-mod locations;
-pub mod navigation;
-mod tags;
-mod time_range;
+use log::*;
+use yew::prelude::*;
 
-pub use contacts::*;
-pub use locations::*;
-pub use tags::*;
+use libsopa::locations::TimePoint;
+
+#[derive(Properties, PartialEq, Clone)]
+pub struct TimeSelectProps {
+    pub on_time_update: Callback<TimePoint>,
+}
+
+#[function_component(TimeSelect)]
+pub fn time_select(props: &TimeSelectProps) -> Html {
+    let TimeSelectProps { on_time_update } = props;
+
+    let oninput = {
+        Callback::from(move |event: InputEvent| {
+            info!("{event:?}");
+        })
+    };
+
+    html! {
+        <div>
+            <input type="time" {oninput} />
+        </div>
+    }
+}
