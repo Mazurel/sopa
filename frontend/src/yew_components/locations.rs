@@ -16,6 +16,7 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
+use super::opened_hours::OpenedHoursView;
 use crate::yew_components::{ContactMethodsView, TagSelectionType, TagView};
 use libsopa::locations::Location;
 use libsopa::tags::Tags;
@@ -150,6 +151,7 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                     <LocationDescriptionView {description} />
                     <LocationAddressView address={location.address.clone()} />
                     <ContactMethodsView methods={location.contact_methods.clone()} />
+                    <OpenedHoursView opened_hours={location.opened_hours.clone()} />
                     if let Some(tag_elements) = tag_elements {
                         <div class="card-content">
                             <div class="component">

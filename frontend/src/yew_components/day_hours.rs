@@ -16,9 +16,24 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use libsopa::locations::{Day, TimePoint, TimeSpan};
+use libsopa::time::{Day, TimePoint, TimeSpan};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
+
+fn init_default_time_span() -> TimeSpan {
+    TimeSpan {
+        #[rustfmt::skip]
+        from: TimePoint {
+            hour: 9,
+            minute: 0
+        },
+        #[rustfmt::skip]
+        to: TimePoint {
+            hour: 17,
+            minute: 0,
+        },
+    }
+}
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct DayHoursEditProps {
@@ -30,18 +45,10 @@ pub struct DayHoursEditProps {
 #[function_component(DayHoursEdit)]
 pub fn day_hours_edit(props: &DayHoursEditProps) -> Html {
     let is_open = props.time_span.is_some();
-    let current_time_span = props.time_span.clone().unwrap_or_else(|| TimeSpan {
-        #[rustfmt::skip]
-        from: TimePoint {
-            hour: 9,
-            minute: 0
-        },
-        #[rustfmt::skip]
-        to: TimePoint {
-            hour: 17,
-            minute: 0,
-        },
-    });
+    let current_time_span = props
+        .time_span
+        .clone()
+        .unwrap_or_else(init_default_time_span);
 
     let toggle_day_enabled = {
         let on_time_span_changed = props.on_time_span_changed.clone();
@@ -124,6 +131,58 @@ pub fn day_hours_edit(props: &DayHoursEditProps) -> Html {
                     onchange={change_closing_time}
                     />
             </div>
+        </div>
+    }
+}
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct DayHoursViewProps {
+    pub day: Day,
+    pub time_span: Option<TimeSpan>,
+}
+
+#[function_component(DayHoursView)]
+pub fn day_hours_view(props: &DayHoursViewProps) -> Html {
+    let is_open = props.time_span.is_some();
+
+    html! {
+        <div class="field is-grouped is-max-tablet">
+            <div class="label is-centered-vertically-in-parent">
+                <span class="icon">
+                    {
+                        if is_open {
+                            html! { <i class="fas fa-check" style="color: green;"></i> }
+                        } else {
+                            html! { <i class="fas fa-times" style="color: red;"></i> }
+                        }
+                    }
+                </span>
+                <span>{props.day.to_display_name()}</span>
+            </div>
+            // NOTE: This is expanded control, to align everything to the right
+            <div class="control is-expanded"/>
+            {
+                if let Some(time_span) = &props.time_span {
+                    html! {
+                        <>
+                            <div class="label is-centered-vertically-in-parent">{t!("day-open")}</div>
+                            <div class="control">
+                                <span class="tag is-light">{time_span.from.to_time_string()}</span>
+                            </div>
+                            <div class="label is-centered-vertically-in-parent">{t!("day-closed")}</div>
+                            <div class="control">
+                                <span class="tag is-light">{time_span.to.to_time_string()}</span>
+                            </div>
+                        </>
+                    }
+                } else {
+                    html! {
+                        <div class="label is-centered-vertically-in-parent">
+                            <span class="tag is-dark">{t!("day-closed")}</span>
+                        </div>
+                    }
+                }
+            }
         </div>
     }
 }

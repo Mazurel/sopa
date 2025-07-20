@@ -16,8 +16,8 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use super::day_hours_edit::DayHoursEdit;
-use libsopa::locations::{Day, OpenedHours, TimeSpan};
+use super::day_hours::DayHoursEdit;
+use libsopa::time::{Day, OpenedHours, TimeSpan};
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
@@ -28,17 +28,7 @@ pub struct OpenedHoursEditProps {
 
 #[function_component(OpenedHoursEdit)]
 pub fn opened_hours_edit(props: &OpenedHoursEditProps) -> Html {
-    let days = vec![
-        Day::Monday,
-        Day::Tuesday,
-        Day::Wednesday,
-        Day::Thursday,
-        Day::Friday,
-        Day::Saturday,
-        Day::Sunday,
-    ];
-
-    let day_components: Vec<Html> = days
+    let day_components: Vec<Html> = Day::get_all_days_in_week()
         .into_iter()
         .map(|day| {
             let day_clone = day.clone();
@@ -82,6 +72,43 @@ pub fn opened_hours_edit(props: &OpenedHoursEditProps) -> Html {
             <div class="block pl-2 pr-6">
                 { day_components }
             </div>
+        </div>
+    }
+}
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct OpenedHoursViewProps {
+    pub opened_hours: OpenedHours,
+}
+
+#[function_component(OpenedHoursView)]
+pub fn opened_hours_view(props: &OpenedHoursViewProps) -> Html {
+    let day_components: Vec<Html> = Day::get_all_days_in_week()
+        .into_iter()
+        .filter_map(|day| {
+            let is_opened = props.opened_hours.is_opened_on_day(&day);
+            if is_opened {
+                let time_span = props
+                    .opened_hours
+                    .get_time_span_per_day()
+                    .get(&day)
+                    .cloned();
+
+                Some(html! {
+                    <super::day_hours::DayHoursView
+                        day={day}
+                        time_span={time_span}
+                    />
+                })
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    html! {
+        <div class="block mt-5 pl-6 pr-6">
+            { day_components }
         </div>
     }
 }

@@ -17,11 +17,12 @@ along with this program; if not, see
 */
 
 use super::location_edit_manager::LocationEditManager;
-use super::opened_hours_edit::OpenedHoursEdit;
 use super::tags_selection::TagsSelectionEditForLocation;
+use crate::yew_components::opened_hours::OpenedHoursEdit;
 use crate::yew_components::ContactMethodsEdit;
 use libsopa::contact::ContactMethods;
-use libsopa::locations::{Location, OpenedHours};
+use libsopa::locations::Location;
+use libsopa::time::OpenedHours;
 use web_sys::{HtmlInputElement, HtmlTextAreaElement};
 use yew::prelude::*;
 

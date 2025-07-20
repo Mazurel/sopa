@@ -17,10 +17,11 @@ along with this program; if not, see
 */
 
 mod contacts;
+pub mod day_hours;
 mod locations;
 pub mod navigation;
+pub mod opened_hours;
 mod tags;
-mod time_range;
 
 pub use contacts::*;
 pub use locations::*;

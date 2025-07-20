@@ -20,6 +20,7 @@ pub mod contact;
 pub mod locations;
 pub mod macros;
 pub mod tags;
+pub mod time;
 
 // Load I18n macro, for allow you use `t!` macro in anywhere.
 #[macro_use]

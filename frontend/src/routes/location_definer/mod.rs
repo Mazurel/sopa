@@ -28,10 +28,8 @@ use crate::download::{download_binary_data, upload_binary_data};
 use location_edit::LocationEdit;
 use location_edit_manager::LocationEditManager;
 
-mod day_hours_edit;
 mod location_edit;
 mod location_edit_manager;
-mod opened_hours_edit;
 mod tags_selection;
 
 #[derive(Properties, Clone, PartialEq)]
