@@ -16,7 +16,6 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use log::info;
 use std::borrow::Cow;
 
 use crate::app::SharedAppState;
@@ -44,6 +43,15 @@ impl Route {
             Route::LocationDefiner => t!("navbar:location-definer"),
             Route::LocationFinder => t!("navbar:location-finder"),
             Route::MainPage => t!("navbar:main-page"),
+        }
+    }
+
+    pub fn into_route_url_pathname(&self) -> &str {
+        match self {
+            Route::About => "/about",
+            Route::LocationDefiner => "/location-definer",
+            Route::LocationFinder => "/location-finder",
+            Route::MainPage => "/main-page",
         }
     }
 
@@ -213,13 +221,23 @@ pub enum NavigationMessage {
     ChangeRoute(Route),
 }
 
+fn get_default_route() -> Route {
+    for route in ALL_ROUTES {
+        if route.into_route_url_pathname() == crate::window_location::read_window_path() {
+            return route;
+        }
+    }
+
+    Route::MainPage
+}
+
 impl Component for NavigationBar {
     type Message = NavigationMessage;
     type Properties = NavigationBarProps;
 
     fn create(_ctx: &Context<Self>) -> Self {
         NavigationBar {
-            route: Route::MainPage,
+            route: get_default_route(),
         }
     }
 
@@ -289,6 +307,9 @@ impl Component for NavigationBar {
             NavigationMessage::ChangeRoute(route) => {
                 if self.route != route {
                     self.route = route;
+                    crate::window_location::set_window_path(
+                        self.route.into_route_url_pathname().to_string(),
+                    );
                     let props = ctx.props();
                     props.on_view_content_update.emit(self.route.clone());
                     true

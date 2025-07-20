@@ -1,15 +1,22 @@
-use web_sys::window;
+use gloo::history::{BrowserHistory, History};
+use serde::Serialize;
 
+pub type Path = String;
+
+// TODO: Allow to add query parameters and handle them somewhere.
+//       use: `gloo::history::query` - https://docs.rs/gloo/latest/gloo/history/query/index.html
+#[derive(Serialize)]
 #[allow(unused)]
-pub fn read_window_path() -> Option<String> {
-    let window = window()?;
-    match window.location().pathname() {
-        Err(_) => None,
-        Ok(pathname) => Some(pathname),
-    }
+pub struct Query {}
+
+fn get_history() -> BrowserHistory {
+    gloo::history::BrowserHistory::new()
 }
 
-#[allow(unused)]
+pub fn read_window_path() -> Path {
+    get_history().location().path().to_string()
+}
+
 pub fn set_window_path(path: String) {
-    unimplemented!("Use gloo history API here")
+    get_history().push(path);
 }
