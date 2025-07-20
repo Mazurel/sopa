@@ -16,7 +16,9 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use web_sys::HtmlInputElement;
+use log::*;
+use wasm_bindgen::JsCast;
+use web_sys::{HtmlInputElement, HtmlSelectElement};
 use yew::prelude::*;
 
 use libsopa::contact::{Contact, ContactMethods, ContactType};
@@ -90,57 +92,52 @@ pub fn contact_edit(props: &ContactEditProps) -> Html {
     let icon_class = classes!(["fas", contact_view_fontawesome_icon,]);
 
     let type_of_contact = {
-        let contact_type_as_str = props.contact.contact_type.to_string();
+        let selected_contact = props.contact.clone();
+
         let all_contact_types: Html = ALL_CONTACT_TYPES
             .iter()
             .map(|contact_type| {
-                let selected_contact = props.contact.clone();
-                let update_contact_cb = props.update_contact_cb.clone();
-                let fontawesome_icon = get_contact_fontawesome_icon(contact_type.clone());
                 let contact_type_name = contact_type.to_string();
-                let mut class = classes!(["fas", fontawesome_icon,]);
-                let onclick = Callback::from(move |_| {
-                    update_contact_cb.emit(Some(Contact {
-                        contact_type: contact_type.clone(),
-                        value: selected_contact.value.clone(),
-                    }))
-                });
-
-                if selected_contact.contact_type == *contact_type {
-                    class.push("is-active");
-                }
+                let is_selected = selected_contact.contact_type == *contact_type;
 
                 html!(
-                <a class="dropdown-item" {onclick}>
-                    <span class="icon is-small">
-                        <i {class} aria-hidden="true"></i>
-                    </span>
-                    <span class="pl-1">{contact_type_name}</span>
-                </a>)
+                    <option selected={is_selected}>
+                        {contact_type_name}
+                    </option>
+                )
             })
             .collect();
 
+        let onchange = {
+            let update_contact_cb = props.update_contact_cb.clone();
+
+            Callback::from(move |event: Event| {
+                let input_element = event
+                    .target()
+                    .and_then(|t| t.dyn_into::<HtmlSelectElement>().ok());
+                if let Some(selection) = input_element.and_then(|el| Some(el.value())) {
+                    for contact_type in &ALL_CONTACT_TYPES {
+                        if contact_type.to_string() == selection {
+                            update_contact_cb.emit(Some(Contact {
+                                contact_type: contact_type.clone(),
+                                value: selected_contact.value.clone(),
+                            }));
+                        }
+                    }
+                };
+            })
+        };
         html!(
-            <>
-                <div class="dropdown is-hoverable">
-                <div class="dropdown-trigger">
-                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                    <span class="icon is-small">
-                        <i class={icon_class} aria-hidden="true"></i>
-                    </span>
-                    <span class="pr-1 pl-1">{contact_type_as_str}</span>
-                    <span class="icon is-small">
-                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                    </span>
-                    </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                    <div class="dropdown-content">
+            <div class="control has-icons-left">
+                <div class="select">
+                    <select {onchange}>
                         {all_contact_types}
-                    </div>
+                    </select>
                 </div>
+                <div class="icon is-small is-left">
+                  <i class={icon_class} aria-hidden="true"></i>
                 </div>
-            </>
+            </div>
         )
     };
 

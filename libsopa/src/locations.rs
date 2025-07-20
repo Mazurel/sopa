@@ -36,14 +36,14 @@ pub enum Day {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct TimePoint {
-    hour: u8,
-    minute: u8,
+    pub hour: u8,
+    pub minute: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct TimeSpan {
-    from: TimePoint,
-    to: TimePoint,
+    pub from: TimePoint,
+    pub to: TimePoint,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -55,6 +55,66 @@ impl Default for OpenedHours {
     fn default() -> Self {
         OpenedHours {
             time_span_per_day: HashMap::new(),
+        }
+    }
+}
+
+impl OpenedHours {
+    pub fn new() -> Self {
+        OpenedHours {
+            time_span_per_day: HashMap::new(),
+        }
+    }
+
+    pub fn get_time_span_per_day(&self) -> &HashMap<Day, TimeSpan> {
+        &self.time_span_per_day
+    }
+
+    pub fn get_time_span_per_day_mut(&mut self) -> &mut HashMap<Day, TimeSpan> {
+        &mut self.time_span_per_day
+    }
+
+    pub fn remove_day(&mut self, day: &Day) {
+        self.time_span_per_day.remove(&day);
+    }
+
+    pub fn set_day_time_span(&mut self, day: Day, time_span: TimeSpan) {
+        self.time_span_per_day.insert(day, time_span);
+    }
+
+    pub fn get_day_time_span(&self, day: &Day) -> Option<&TimeSpan> {
+        self.time_span_per_day.get(day)
+    }
+}
+
+impl TimePoint {
+    pub fn to_time_string(&self) -> String {
+        format!("{:02}:{:02}", self.hour, self.minute)
+    }
+
+    pub fn from_time_string(time_str: &str) -> Option<Self> {
+        let parts: Vec<&str> = time_str.split(':').collect();
+        if parts.len() == 2 {
+            if let (Ok(hour), Ok(minute)) = (parts[0].parse::<u8>(), parts[1].parse::<u8>()) {
+                if hour < 24 && minute < 60 {
+                    return Some(TimePoint { hour, minute });
+                }
+            }
+        }
+        None
+    }
+}
+
+impl Day {
+    pub fn to_display_name(&self) -> std::borrow::Cow<'_, str> {
+        match self {
+            Day::Monday => t!("monday"),
+            Day::Tuesday => t!("tuesday"),
+            Day::Wednesday => t!("wednesday"),
+            Day::Thursday => t!("thursday"),
+            Day::Friday => t!("friday"),
+            Day::Saturday => t!("saturday"),
+            Day::Sunday => t!("sunday"),
         }
     }
 }

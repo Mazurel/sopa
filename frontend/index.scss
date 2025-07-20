@@ -35,6 +35,15 @@ $fa-font-path: "./webfonts";
     }
 }
 
+.is-centered-vertically-in-parent {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+//
+/// Definitions for selectable element
+//
+
 $selected_border_width: calc(bulma_vars.$gap / 10);
 
 .selectable {
@@ -51,6 +60,10 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
 .selected {
     border: $selected_border_width solid bulma_vars.$green;
 }
+
+//
+/// Definitions for notifications
+//
 
 #notification-container {
     position: fixed;

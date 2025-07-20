@@ -28,8 +28,10 @@ use crate::download::{download_binary_data, upload_binary_data};
 use location_edit::LocationEdit;
 use location_edit_manager::LocationEditManager;
 
+mod day_hours_edit;
 mod location_edit;
 mod location_edit_manager;
+mod opened_hours_edit;
 mod tags_selection;
 
 #[derive(Properties, Clone, PartialEq)]
@@ -226,7 +228,7 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                 </button>
             </div>
             <div class="columns">
-                <div style="height: 75em; overflow: scroll" class="column is-one-third">
+                <div style="height: 100vh; overflow: scroll" class="column is-one-third">
                     { all_locations_view }
                 </div>
                 <div style="height: min-content" class="column box is-two-thirds">

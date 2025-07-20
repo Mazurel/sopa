@@ -24,6 +24,7 @@ web-sys = { version = "0.3.76", features = [
     "Document",
     "HtmlDocument",
     "HtmlElement",
+    "HtmlSelectElement",
     "Window",
     "Navigator",
     "MediaQueryList",    # for `window.match_media`

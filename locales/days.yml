@@ -1,0 +1,28 @@
+_version: 2
+monday:
+  en: Monday
+  pl: Poniedziałek
+tuesday:
+  en: Tuesday
+  pl: Wtorek
+wednesday:
+  en: Wednesday
+  pl: Środa
+thursday:
+  en: Thursday
+  pl: Czwartek
+friday:
+  en: Friday
+  pl: Piątek
+saturday:
+  en: Saturday
+  pl: Sobota
+sunday:
+  en: Sunday
+  pl: Niedziela
+day-open:
+  en: Open
+  pl: Otwarte
+day-closed:
+  en: Closed
+  pl: Zamknięte

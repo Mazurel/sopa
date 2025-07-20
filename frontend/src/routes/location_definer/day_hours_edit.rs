@@ -1,0 +1,129 @@
+/*
+Copyright (C) 2025 Mateusz Mazur (Mazurel) <mateusz.mazur@e.email>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, see
+<https://www.gnu.org/licenses/>.
+*/
+
+use libsopa::locations::{Day, TimePoint, TimeSpan};
+use web_sys::HtmlInputElement;
+use yew::prelude::*;
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct DayHoursEditProps {
+    pub day: Day,
+    pub time_span: Option<TimeSpan>,
+    pub on_time_span_changed: Callback<Option<TimeSpan>>,
+}
+
+#[function_component(DayHoursEdit)]
+pub fn day_hours_edit(props: &DayHoursEditProps) -> Html {
+    let is_open = props.time_span.is_some();
+    let current_time_span = props.time_span.clone().unwrap_or_else(|| TimeSpan {
+        #[rustfmt::skip]
+        from: TimePoint {
+            hour: 9,
+            minute: 0
+        },
+        #[rustfmt::skip]
+        to: TimePoint {
+            hour: 17,
+            minute: 0,
+        },
+    });
+
+    let toggle_day_enabled = {
+        let on_time_span_changed = props.on_time_span_changed.clone();
+        let current_time_span = current_time_span.clone();
+        Callback::from(move |event: Event| {
+            if let Some(input) = event.target_dyn_into::<HtmlInputElement>() {
+                if input.checked() {
+                    on_time_span_changed.emit(Some(current_time_span.clone()));
+                } else {
+                    on_time_span_changed.emit(None);
+                }
+            }
+        })
+    };
+
+    let change_opening_time = {
+        let on_time_span_changed = props.on_time_span_changed.clone();
+        let current_time_span = current_time_span.clone();
+        Callback::from(move |event: Event| {
+            if let Some(input) = event.target_dyn_into::<HtmlInputElement>() {
+                if let Some(new_from) = TimePoint::from_time_string(&input.value()) {
+                    let new_time_span = TimeSpan {
+                        from: new_from,
+                        to: current_time_span.to.clone(),
+                    };
+                    on_time_span_changed.emit(Some(new_time_span));
+                }
+            }
+        })
+    };
+
+    let change_closing_time = {
+        let on_time_span_changed = props.on_time_span_changed.clone();
+        let current_time_span = current_time_span.clone();
+        Callback::from(move |event: Event| {
+            if let Some(input) = event.target_dyn_into::<HtmlInputElement>() {
+                if let Some(new_to) = TimePoint::from_time_string(&input.value()) {
+                    let new_time_span = TimeSpan {
+                        from: current_time_span.from.clone(),
+                        to: new_to,
+                    };
+                    on_time_span_changed.emit(Some(new_time_span));
+                }
+            }
+        })
+    };
+
+    html! {
+        <div class="field is-grouped is-max-tablet">
+            <div style="width: 1em" class="block"/>
+            <div class="control is-centered-vertically-in-parent">
+                <input
+                    style="vertical-align: middle;"
+                    class="checkbox"
+                    type="checkbox"
+                    checked={is_open}
+                    onchange={toggle_day_enabled}
+                    />
+            </div>
+            <div class="label is-centered-vertically-in-parent">{props.day.to_display_name()}</div>
+            // NOTE: This is expanded control, to align everything to the right
+            <div class="control is-expanded"/>
+            <div class="label is-centered-vertically-in-parent">{t!("day-open")}</div>
+            <div class="control">
+                <input
+                    class="input"
+                    type="time"
+                    value={current_time_span.from.to_time_string()}
+                    disabled={!is_open}
+                    onchange={change_opening_time}
+                    />
+            </div>
+            <div class="label is-centered-vertically-in-parent">{t!("day-closed")}</div>
+            <div class="control">
+                <input
+                    class="input"
+                    type="time"
+                    value={current_time_span.to.to_time_string()}
+                    disabled={!is_open}
+                    onchange={change_closing_time}
+                    />
+            </div>
+        </div>
+    }
+}

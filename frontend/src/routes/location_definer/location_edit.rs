@@ -17,12 +17,39 @@ along with this program; if not, see
 */
 
 use super::location_edit_manager::LocationEditManager;
+use super::opened_hours_edit::OpenedHoursEdit;
 use super::tags_selection::TagsSelectionEditForLocation;
 use crate::yew_components::ContactMethodsEdit;
 use libsopa::contact::ContactMethods;
-use libsopa::locations::Location;
+use libsopa::locations::{Location, OpenedHours};
 use web_sys::{HtmlInputElement, HtmlTextAreaElement};
 use yew::prelude::*;
+
+fn edit_control_buttons(
+    save_on_click: Callback<MouseEvent>,
+    clear_on_click: Callback<MouseEvent>,
+    remove_on_click: Callback<MouseEvent>,
+) -> Html {
+    html!(
+        <div class="field has-addons mt-5">
+            <div class="control">
+                <button class="button is-link is-light" onclick={save_on_click}>
+                    {t!("location-definer-button-save")}
+                </button>
+            </div>
+            <div class="control">
+                <button class="button is-warning is-light" onclick={clear_on_click}>
+                    {t!("location-definer-button-reset")}
+                </button>
+            </div>
+            <div class="control">
+                <button class="button is-danger is-light" onclick={remove_on_click}>
+                    {t!("location-definer-button-remove")}
+                </button>
+            </div>
+        </div>
+    )
+}
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct LocationEditProps {
@@ -74,6 +101,15 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
         Callback::from(move |new_contact_methods| {
             let mut location = location_edit_manager.get_location_under_edit();
             location.contact_methods = new_contact_methods;
+            location_edit_manager.stage_location_changes(location);
+        })
+    };
+
+    let change_opened_hours: Callback<OpenedHours> = {
+        let location_edit_manager = props.location_edit_manager.clone();
+        Callback::from(move |new_opened_hours| {
+            let mut location = location_edit_manager.get_location_under_edit();
+            location.opened_hours = new_opened_hours;
             location_edit_manager.stage_location_changes(location);
         })
     };
@@ -143,6 +179,7 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
                         />
                 </div>
             </div>
+            <OpenedHoursEdit opened_hours={location_to_edit.opened_hours.clone()} on_opened_hours_changed={change_opened_hours}/>
             <ContactMethodsEdit methods={location_to_edit.contact_methods.clone()} on_methods_changed={change_contact_methods}/>
             <div class="field">
                 <div class="label">{t!("location-definer-tags-label")}</div>
@@ -150,23 +187,11 @@ pub fn location_edit(props: &LocationEditProps) -> Html {
                     <TagsSelectionEditForLocation location={location_to_edit.clone()} location_edit_manager={props.location_edit_manager.clone()}/>
                 </div>
             </div>
-            <div class="field has-addons mt-5">
-                <div class="control">
-                    <button class="button is-link is-light" onclick={button_save_on_click}>
-                        {t!("location-definer-button-save")}
-                    </button>
-                </div>
-                <div class="control">
-                    <button class="button is-warning is-light" onclick={button_clear_on_click}>
-                        {t!("location-definer-button-reset")}
-                    </button>
-                </div>
-                <div class="control">
-                    <button class="button is-danger is-light" onclick={button_remove_on_click}>
-                        {t!("location-definer-button-remove")}
-                    </button>
-                </div>
-            </div>
+            {edit_control_buttons(
+                button_save_on_click,
+                button_clear_on_click,
+                button_remove_on_click,
+            )}
         </>
     )
 }
