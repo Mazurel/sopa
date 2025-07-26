@@ -34,7 +34,7 @@ yew = { version = "0.21.0", features = ["csr"] }
 getrandom = { version = "0.3.0", features = ["wasm_js"] }
 libsopa = { path = "../libsopa", features = ["wasm"] }
 deli = "0.2.0"
-gloo = { version = "0.11.0", features = ["dialogs"] }
+gloo = { version = "0.11.0", features = ["dialogs", "history", "timers"] }
 
 [dependencies.uuid]
 version = "1.12.1"

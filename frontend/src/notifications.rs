@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use gloo::timers::callback::Interval;
 use yew::prelude::*;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -16,6 +17,9 @@ pub struct NotificationProps {
     request_close_cb: Callback<()>,
 }
 
+const PROGRESS_MILISECONDS_TIMEOUT: u32 = 5000;
+const PROGRESS_MILISECONDS_STEP: u32 = 5;
+
 #[function_component(Notification)]
 fn notification(props: &NotificationProps) -> Html {
     let NotificationProps {
@@ -24,30 +28,60 @@ fn notification(props: &NotificationProps) -> Html {
         request_close_cb,
     } = props;
 
-    let onclick = {
-        let request_close_cb = request_close_cb.clone();
-        Callback::from(move |_| request_close_cb.emit(()))
+    let progress_changed = use_force_update();
+    let progress_miliseconds_ref = use_mut_ref(|| 0);
+    let progress_miliseconds = progress_miliseconds_ref.borrow().clone();
+
+    if progress_miliseconds >= PROGRESS_MILISECONDS_TIMEOUT {
+        request_close_cb.emit(());
+    }
+
+    // Reference to the Interval object to manage periodically called closure
+    let interval_ref = {
+        let progress_miliseconds_ref = progress_miliseconds_ref.clone();
+        use_mut_ref(|| {
+            Some(Interval::new(PROGRESS_MILISECONDS_STEP, move || {
+                let current_miliseconds = *(progress_miliseconds_ref.borrow());
+                let next_miliseconds_state = current_miliseconds + PROGRESS_MILISECONDS_STEP;
+                *(progress_miliseconds_ref.borrow_mut()) = next_miliseconds_state;
+                progress_changed.force_update();
+            }))
+        })
     };
 
-    match notification_type {
-        NotificationType::Info => html! {
-            <div class="notification is-info">
-                <button class="delete" {onclick}></button>
-                { notification_content }
-            </div>
+    // On click handler to request closing Notification + clean Interval object
+    let onclick = {
+        let request_close_cb = request_close_cb.clone();
+        let interval_ref = interval_ref.clone();
+        Callback::from(move |_| {
+            let mut maybe_interval = interval_ref.borrow_mut();
+            if maybe_interval.is_some() {
+                maybe_interval.take().unwrap().cancel();
+            }
+            request_close_cb.emit(());
+        })
+    };
+
+    let value = progress_miliseconds.to_string();
+    let max = PROGRESS_MILISECONDS_TIMEOUT.to_string();
+    let class = match notification_type {
+        NotificationType::Info => classes! {
+            "notification", "is-info"
         },
-        NotificationType::Error => html! {
-            <div class="notification is-error">
-                <button class="delete" {onclick}></button>
-                { notification_content }
-            </div>
+        NotificationType::Error => classes! {
+            "notification", "is-error"
         },
-        NotificationType::Warning => html! {
-            <div class="notification is-warning">
-                <button class="delete" {onclick}></button>
-                { notification_content }
-            </div>
+        NotificationType::Warning => classes! {
+            "notification", "is-warning"
         },
+    };
+
+    html! {
+        <div {class}>
+            <button class="delete" {onclick}></button>
+            { notification_content }
+            <progress class="progress" {value} {max}></progress>
+        </div>
     }
 }
 
