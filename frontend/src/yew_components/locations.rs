@@ -149,9 +149,15 @@ pub fn location_view(props: &LocationViewProps) -> Html {
                 </div>
                 if !props.simplified_view {
                     <LocationDescriptionView {description} />
-                    <LocationAddressView address={location.address.clone()} />
-                    <ContactMethodsView methods={location.contact_methods.clone()} />
-                    <OpenedHoursView opened_hours={location.opened_hours.clone()} />
+                    <div class="columns">
+                        <div class="column">
+                            <LocationAddressView address={location.address.clone()} />
+                            <ContactMethodsView methods={location.contact_methods.clone()} />
+                        </div>
+                        <div class="column">
+                            <OpenedHoursView opened_hours={location.opened_hours.clone()} />
+                        </div>
+                    </div>
                     if let Some(tag_elements) = tag_elements {
                         <div class="card-content">
                             <div class="component">

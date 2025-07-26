@@ -37,7 +37,7 @@ fn locations_view(props: &LocationsViewProps) -> Html {
         .collect::<Vec<_>>();
 
     html!(
-        <div class="container box is-max-desktop mt-2">
+        <div class="container box mt-2">
             {all_locations}
         </div>
     )

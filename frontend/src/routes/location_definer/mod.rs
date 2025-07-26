@@ -226,7 +226,8 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                 </button>
             </div>
             <div class="columns">
-                <div style="height: 100vh; overflow: scroll" class="column is-one-third">
+                // The idea is that height is capped by LocationEdit window size
+                <div style="height: inherit; overflow: scroll" class="column is-one-third">
                     { all_locations_view }
                 </div>
                 <div style="height: min-content" class="column box is-two-thirds">

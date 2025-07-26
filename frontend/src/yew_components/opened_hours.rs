@@ -107,7 +107,7 @@ pub fn opened_hours_view(props: &OpenedHoursViewProps) -> Html {
         .collect();
 
     html! {
-        <div class="block mt-5 pl-6 pr-6">
+        <div class="block pl-6 pr-6">
             { day_components }
         </div>
     }

@@ -164,7 +164,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
         .collect::<Vec<Html>>();
 
     html! {
-        <div class="container card is-max-tablet mt-2 p-1 is-shadowless">
+        <div class="container card mt-2 p-1 is-shadowless">
             <div class="block is-info is-size-3 p-1">
                 {tag_selection}
             </div>

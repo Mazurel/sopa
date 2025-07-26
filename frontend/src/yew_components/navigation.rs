@@ -101,12 +101,12 @@ fn naventry(props: &NavigationEntryProps) -> Html {
 
     html!(
         if props.is_selected {
-            <a class="navbar-item has-text-weight-semibold" {onclick}>
+            <a class="navbar-item has-text-weight-normal is-size-4 is-active is-selected" {onclick}>
                 {route_name}
             </a>
         }
         else {
-            <a class="navbar-item is-primary has-text-weight-normal" {onclick}>
+            <a class="navbar-item is-primary has-text-weight-normal is-size-4" {onclick}>
                 {route_name}
             </a>
         }
@@ -140,7 +140,7 @@ pub fn language_selection_navigation_entry(props: &LanguageSelectionNavigationEn
             });
 
             html!(
-                <a class="navbar-item is-hoverable" {onclick}>
+                <a class="navbar-item is-hoverable is-size-6" {onclick}>
                     {format!("{} {}", emoji, lang_string)}
                 </a>
             )
@@ -148,7 +148,7 @@ pub fn language_selection_navigation_entry(props: &LanguageSelectionNavigationEn
         .collect::<Vec<_>>();
 
     html!(
-        <a class="navbar-item is-info has-text-weight-normal is-hoverable has-dropdown">
+        <a class="navbar-item is-info has-text-weight-normal is-hoverable has-dropdown is-size-4">
             <a class="navbar-link">
                 {t!("navigation-bar-language-selection")}
             </a>
@@ -271,7 +271,7 @@ impl Component for NavigationBar {
 
         html!(
             <div class="">
-                <nav class="navbar is-info mb-6" role="navigation" aria-label="main navigation">
+                <nav class="navbar is-primary mb-6" role="navigation" aria-label="main navigation">
                     <div class="navbar-brand">
                         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                             <span aria-hidden="false"></span>

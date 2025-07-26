@@ -116,6 +116,8 @@ pub fn day_hours_edit(props: &DayHoursEditProps) -> Html {
                 <input
                     class="input"
                     type="time"
+                    min="00:00"
+                    max="24:00"
                     value={current_time_span.from.to_time_string()}
                     disabled={!is_open}
                     onchange={change_opening_time}
@@ -126,6 +128,8 @@ pub fn day_hours_edit(props: &DayHoursEditProps) -> Html {
                 <input
                     class="input"
                     type="time"
+                    min="00:00"
+                    max="24:00"
                     value={current_time_span.to.to_time_string()}
                     disabled={!is_open}
                     onchange={change_closing_time}
@@ -143,46 +147,25 @@ pub struct DayHoursViewProps {
 
 #[function_component(DayHoursView)]
 pub fn day_hours_view(props: &DayHoursViewProps) -> Html {
-    let is_open = props.time_span.is_some();
+    let time_span = &props.time_span;
+    let day_name = props.day.to_display_name();
 
-    html! {
-        <div class="field is-grouped is-max-tablet">
-            <div class="label is-centered-vertically-in-parent">
-                <span class="icon">
-                    {
-                        if is_open {
-                            html! { <i class="fas fa-check" style="color: green;"></i> }
-                        } else {
-                            html! { <i class="fas fa-times" style="color: red;"></i> }
-                        }
-                    }
-                </span>
-                <span>{props.day.to_display_name()}</span>
+    match time_span {
+        None => html!(<> </>),
+        Some(time_span) => html! {
+            <div class="field is-grouped is-max-tablet">
+                <div class="control"/>
+                <div class="control">
+                    <span class="tag is-medium">{time_span.from.to_time_string()}</span>
+                </div>
+                <div class="label is-centered-vertically-in-parent">{" : "}</div>
+                <div class="control">
+                    <span class="tag is-medium">{time_span.to.to_time_string()}</span>
+                </div>
+                <div class="label is-centered-vertically-in-parent">
+                    <span>{day_name}</span>
+                </div>
             </div>
-            // NOTE: This is expanded control, to align everything to the right
-            <div class="control is-expanded"/>
-            {
-                if let Some(time_span) = &props.time_span {
-                    html! {
-                        <>
-                            <div class="label is-centered-vertically-in-parent">{t!("day-open")}</div>
-                            <div class="control">
-                                <span class="tag is-light">{time_span.from.to_time_string()}</span>
-                            </div>
-                            <div class="label is-centered-vertically-in-parent">{t!("day-closed")}</div>
-                            <div class="control">
-                                <span class="tag is-light">{time_span.to.to_time_string()}</span>
-                            </div>
-                        </>
-                    }
-                } else {
-                    html! {
-                        <div class="label is-centered-vertically-in-parent">
-                            <span class="tag is-dark">{t!("day-closed")}</span>
-                        </div>
-                    }
-                }
-            }
-        </div>
+        },
     }
 }

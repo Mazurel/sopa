@@ -1,8 +1,11 @@
 @use "sass:color";
+
+$sopa_primary: #4c956c;
+
 // Load Bulma's base styles and themes (including the minireset)
 @use "third_party/bulma/sass" with (
     $family-primary: '"Red Hat Text", "Lato", sans-serif',
-    $primary: #4c956c,
+    $primary: $sopa_primary,
     $white: #ffffff,
     $grey: #1e212b,
     $yellow: #d8a64e,
@@ -79,6 +82,11 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
 
 .footer {
     margin-top: 10rem;
+}
+
+// Settings for navbar
+a.is-selected {
+    background-color: color.adjust($sopa_primary, $saturation: -12%);
 }
 
 // Global transition setting
