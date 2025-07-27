@@ -67,7 +67,7 @@ pub fn opened_hours_edit(props: &OpenedHoursEditProps) -> Html {
     html! {
         <div class="block pb-2">
             <div class="block">
-                <span class="is-size-5">{"Open Hours"}</span>
+                <span class="is-size-5">{t!("open-hours")}</span>
             </div>
             <div class="block pl-2 pr-6">
                 { day_components }

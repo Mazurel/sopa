@@ -84,7 +84,6 @@ pub fn contact_edit(props: &ContactEditProps) -> Html {
         ContactType::PhoneNumber,
         ContactType::WebAddress,
     ];
-    let contacts_edit_value_label = t!("contacts-edit-value-label");
 
     let contact_view_fontawesome_icon =
         get_contact_fontawesome_icon(props.contact.contact_type.clone());

@@ -1,5 +1,3 @@
-use std::thread::current;
-
 use libsopa::time::TimePoint;
 use wasm_bindgen::JsCast;
 use web_sys::HtmlInputElement;
