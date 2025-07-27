@@ -79,7 +79,9 @@ fn notification(props: &NotificationProps) -> Html {
     html! {
         <div {class}>
             <button class="delete" {onclick}></button>
-            { notification_content }
+            <div class="content notification-content">
+                { notification_content }
+            </div>
             <progress class="progress" {value} {max}></progress>
         </div>
     }
