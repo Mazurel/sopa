@@ -16,7 +16,6 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use log::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlInputElement, HtmlSelectElement};
 use yew::prelude::*;

@@ -16,6 +16,7 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
+use super::timepicker::Timepicker;
 use libsopa::time::{Day, TimePoint, TimeSpan};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -67,32 +68,24 @@ pub fn day_hours_edit(props: &DayHoursEditProps) -> Html {
     let change_opening_time = {
         let on_time_span_changed = props.on_time_span_changed.clone();
         let current_time_span = current_time_span.clone();
-        Callback::from(move |event: Event| {
-            if let Some(input) = event.target_dyn_into::<HtmlInputElement>() {
-                if let Some(new_from) = TimePoint::from_time_string(&input.value()) {
-                    let new_time_span = TimeSpan {
-                        from: new_from,
-                        to: current_time_span.to.clone(),
-                    };
-                    on_time_span_changed.emit(Some(new_time_span));
-                }
-            }
+        Callback::from(move |new_time: TimePoint| {
+            let new_time_span = TimeSpan {
+                from: new_time,
+                to: current_time_span.to.clone(),
+            };
+            on_time_span_changed.emit(Some(new_time_span));
         })
     };
 
     let change_closing_time = {
         let on_time_span_changed = props.on_time_span_changed.clone();
         let current_time_span = current_time_span.clone();
-        Callback::from(move |event: Event| {
-            if let Some(input) = event.target_dyn_into::<HtmlInputElement>() {
-                if let Some(new_to) = TimePoint::from_time_string(&input.value()) {
-                    let new_time_span = TimeSpan {
-                        from: current_time_span.from.clone(),
-                        to: new_to,
-                    };
-                    on_time_span_changed.emit(Some(new_time_span));
-                }
-            }
+        Callback::from(move |new_time: TimePoint| {
+            let new_time_span = TimeSpan {
+                from: current_time_span.from.clone(),
+                to: new_time,
+            };
+            on_time_span_changed.emit(Some(new_time_span));
         })
     };
 
@@ -112,29 +105,17 @@ pub fn day_hours_edit(props: &DayHoursEditProps) -> Html {
             // NOTE: This is expanded control, to align everything to the right
             <div class="control is-expanded"/>
             <div class="label is-centered-vertically-in-parent">{t!("day-open")}</div>
-            <div class="control">
-                <input
-                    class="input"
-                    type="time"
-                    min="00:00"
-                    max="24:00"
-                    value={current_time_span.from.to_time_string()}
-                    disabled={!is_open}
-                    onchange={change_opening_time}
-                    />
-            </div>
+            <Timepicker
+                on_time_changed={change_opening_time}
+                disabled={!is_open}
+                current_time={current_time_span.from}
+                />
             <div class="label is-centered-vertically-in-parent">{t!("day-closed")}</div>
-            <div class="control">
-                <input
-                    class="input"
-                    type="time"
-                    min="00:00"
-                    max="24:00"
-                    value={current_time_span.to.to_time_string()}
-                    disabled={!is_open}
-                    onchange={change_closing_time}
-                    />
-            </div>
+            <Timepicker
+                on_time_changed={change_closing_time}
+                disabled={!is_open}
+                current_time={current_time_span.to}
+                />
         </div>
     }
 }

@@ -22,6 +22,7 @@ mod locations;
 pub mod navigation;
 pub mod opened_hours;
 mod tags;
+pub mod timepicker;
 
 pub use contacts::*;
 pub use locations::*;

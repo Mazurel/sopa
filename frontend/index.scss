@@ -13,6 +13,7 @@ $sopa_primary: #4c956c;
 );
 @use "third_party/bulma/sass/utilities/mixins";
 @use "third_party/bulma/sass/utilities/initial-variables" as bulma_vars;
+@use "third_party/bulma/sass/utilities/derived-variables.scss" as *;
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Limelight&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap");
 
@@ -78,6 +79,30 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
         right: 1rem;
         bottom: 1rem;
     }
+}
+
+.timepicker {
+    border: 1px solid rgb(163, 175, 251);
+    text-align: center;
+    display: inline;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.timepicker .hours,
+.timepicker .minutes {
+    width: 30px;
+    outline: none;
+    border: none;
+    text-align: center;
+}
+
+.timepicker.valid {
+    border: solid 1px $success;
+}
+
+.timepicker.invalid {
+    border: solid 1px $danger;
 }
 
 .footer {
