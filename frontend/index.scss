@@ -1,26 +1,23 @@
 @use "sass:color";
-
-$sopa_primary: #4c956c;
-
 // Load Bulma's base styles and themes (including the minireset)
-@use "third_party/bulma/sass" with (
+@use "third_party/bulma/sass" as bulma with (
     $family-primary: '"Red Hat Text", "Lato", sans-serif',
-    $primary: $sopa_primary,
+    $primary: #4c956c,
     $white: #ffffff,
     $grey: #1e212b,
     $yellow: #d8a64e,
     $cyan: #00a7e1
 );
-@use "third_party/bulma/sass/utilities/mixins";
-@use "third_party/bulma/sass/utilities/initial-variables" as bulma_vars;
-@use "third_party/bulma/sass/utilities/derived-variables.scss" as *;
+@use "third_party/bulma/sass/utilities/mixins" as bulma_mixins;
+// Font Awesome 5
+@use "third_party/fontawesome/scss/fontawesome.scss" with (
+    $fa-font-path: "./webfonts",
+    $fa-css-prefix: "fa"
+);
+@use "third_party/fontawesome/scss/solid.scss";
+
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Limelight&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap");
-
-// Font Awesome 5
-$fa-font-path: "./webfonts";
-@import "third_party/fontawesome/scss/fontawesome.scss";
-@import "third_party/fontawesome/scss/solid.scss";
 
 .is-logo-font {
     font-family: "Limelight", serif;
@@ -33,7 +30,7 @@ $fa-font-path: "./webfonts";
     right: 2rem;
     bottom: 2rem;
 
-    @include mixins.touch {
+    @include bulma_mixins.touch {
         right: 1rem;
         bottom: 1rem;
     }
@@ -48,21 +45,20 @@ $fa-font-path: "./webfonts";
 /// Definitions for selectable element
 //
 
-$selected_border_width: calc(bulma_vars.$gap / 10);
+$selected_border_width: calc(bulma.$gap / 10);
 
 .selectable {
     cursor: pointer;
-    border: $selected_border_width solid
-        color.adjust(bulma_vars.$green, $alpha: -1);
+    border: $selected_border_width solid color.adjust(bulma.$green, $alpha: -1);
 }
 
 .selectable:hover {
     border: $selected_border_width solid
-        color.adjust(bulma_vars.$green, $alpha: -0.8);
+        color.adjust(bulma.$green, $alpha: -0.8);
 }
 
 .selected {
-    border: $selected_border_width solid bulma_vars.$green;
+    border: $selected_border_width solid bulma.$green;
 }
 
 //
@@ -75,7 +71,7 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
     bottom: 2rem;
     width: 20rem;
 
-    @include mixins.touch {
+    @include bulma_mixins.touch {
         right: 1rem;
         bottom: 1rem;
     }
@@ -117,11 +113,11 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
 }
 
 .timepicker.valid {
-    border: solid 1px $success;
+    border: solid 1px bulma.$success;
 }
 
 .timepicker.invalid {
-    border: solid 1px $danger;
+    border: solid 1px bulma.$danger;
 }
 
 .footer {
@@ -130,7 +126,7 @@ $selected_border_width: calc(bulma_vars.$gap / 10);
 
 // Settings for navbar
 a.is-selected {
-    background-color: color.adjust($sopa_primary, $saturation: -12%);
+    background-color: color.adjust(bulma.$primary, $saturation: -12%);
 }
 
 // Global transition setting
