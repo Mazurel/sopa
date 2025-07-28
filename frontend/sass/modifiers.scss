@@ -1,0 +1,39 @@
+@use "sass:color";
+@use "../third_party/bulma/sass" as bulma;
+@use "../third_party/bulma/sass/utilities/mixins" as bulma_mixins;
+
+.is-pinned-to-right-bot {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+
+    @include bulma_mixins.touch {
+        right: 1rem;
+        bottom: 1rem;
+    }
+}
+
+.is-centered-vertically-in-parent {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+//
+/// Definitions for selectable element
+//
+
+$selected_border_width: calc(bulma.$gap / 10);
+
+.selectable {
+    cursor: pointer;
+    border: $selected_border_width solid color.adjust(bulma.$green, $alpha: -1);
+}
+
+.selectable:hover {
+    border: $selected_border_width solid
+        color.adjust(bulma.$green, $alpha: -0.8);
+}
+
+.selected {
+    border: $selected_border_width solid bulma.$green;
+}
