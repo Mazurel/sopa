@@ -1,76 +1,24 @@
-/*
-Copyright (C) 2025 Mateusz Mazur (Mazurel) <mateusz.mazur@e.email>
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, see
-<https://www.gnu.org/licenses/>.
-*/
-
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, hash::Hash, str::FromStr};
 
-use crate::{count_args, define_tags};
+#[derive(Hash, Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TagGroup {
+    Sex,
+    Age,
+    GeoLocation,
+}
+
+pub const ALL_TAG_GROUPS: &[TagGroup] = &[TagGroup::Sex, TagGroup::Age, TagGroup::GeoLocation];
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Tag {
     pub name: String,
 }
 
-define_tags!(
-    "gender:male",
-    "gender:female",
-    "sexuality:lgbt",
-    "type:hostel",
-    "age:adult",
-    "age:kid",
-    "contact:phone",
-    "domestic abuse",
-    "homelessness crisis",
-    "disability",
-    "suicidal crisis",
-    "discrimination",
-    "law",
-    "social issues",
-    "sexual abuse",
-    "victims of crime",
-    "parenting",
-    "alcohol abuse",
-    "substance abuse",
-    "NFZ",
-    "NGO", // Non-goverment
-    "griving",
-    "teenagers",
-    "financial issues",
-    "unemployment",
-    "couples",
-    "long-term therapy",
-    "mental illness",
-    "elderly"
-);
-
-pub fn get_all_supported_tags() -> Vec<Tag> {
-    ALL_DEFINED_TAGS
-        .iter()
-        .map(|tag_name| Tag {
-            name: tag_name.to_string(),
-        })
-        .collect()
-}
-
-pub fn get_all_supported_tags_in_order() -> Vec<Tag> {
-    let mut all_tags = get_all_supported_tags();
-    all_tags.sort_by_key(|tag| tag.human_readable().to_lowercase());
-    all_tags
+impl Tag {
+    pub fn new(name: String) -> Tag {
+        Tag { name }
+    }
 }
 
 impl FromStr for Tag {
@@ -97,7 +45,7 @@ impl Hash for Tag {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Tags {
-    tags: HashSet<Tag>,
+    pub tags: HashSet<Tag>,
 }
 
 impl From<Vec<Tag>> for Tags {
@@ -125,17 +73,8 @@ impl Tags {
         self.tags.iter().collect()
     }
 
-    pub fn get_all_tags_in_order(&self) -> Vec<&Tag> {
-        let mut tags = self.tags.iter().collect::<Vec<_>>();
-        tags.sort_by_key(|tag| tag.human_readable().to_lowercase());
-        tags
-    }
-
     pub fn define_tag<Str: ToString>(&mut self, tag: Str) -> Tag {
-        let tag_id = tag.to_string();
-        let tag = Tag {
-            name: tag_id.to_string(),
-        };
+        let tag = Tag::new(tag.to_string());
         self.tags.insert(tag.clone().into());
         tag
     }

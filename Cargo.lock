@@ -999,6 +999,7 @@ version = "0.1.0"
 dependencies = [
  "bson",
  "deli",
+ "lazy_static",
  "rust-i18n",
  "serde",
  "uuid",

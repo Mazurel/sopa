@@ -5,22 +5,22 @@ location-tags-info:
 select-tags:
   en: Please select tags
   pl: Wybierz typy placówek, które cię interesują
-gender:female:
+Female:
   en: "Female"
   pl: "Kobieta"
-gender:male:
+Male:
   en: "Male"
   pl: "Mężczyzna"
-sexuality:lgbt:
+LGBT:
   en: "LGBT"
   pl: "LGBT"
-type:hostel:
+Hostel:
   en: "Hostel"
   pl: "Hostel"
-age:adult:
+Adult:
   en: "Adult"
   pl: "Dorośli"
-age:kid:
+Kid:
   en: "Children"
   pl: "Dzieci"
 contact:phone:
@@ -71,7 +71,7 @@ NGO:
 griving:
   en: "Griving"
   pl: "Żałoba"
-teenagers:
+Teenagers:
   en: "Tennagers"
   pl: "Nastolatki"
 financial issues:
@@ -89,6 +89,6 @@ long-term therapy:
 mental illness:
   en: "Mental Illness"
   pl: "Zdrowie Psychiczne"
-elderly:
+Elderly:
   en: "Elderly"
   pl: "Seniorzy"

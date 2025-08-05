@@ -18,7 +18,6 @@ along with this program; if not, see
 
 pub mod contact;
 pub mod locations;
-pub mod macros;
 pub mod tags;
 pub mod time;
 
