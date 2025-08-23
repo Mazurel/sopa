@@ -28,8 +28,6 @@ The application uses a sophisticated multi-layer database system designed for we
 1. **Browser Persistence (IndexedDB)**
    - Primary storage using the browser's IndexedDB API
    - Automatic synchronization between memory and persistent storage
-   - Thread-safe operations with `Arc<RwLock>` for concurrent access
-   - Real-time callbacks for UI updates when data changes
 
 2. **BSON Serialization**
    - Location data serialized to Binary JSON (BSON) format
