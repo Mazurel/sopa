@@ -35,7 +35,9 @@ define_tags!(
     // Geolocations
     "Trojmiasto" group: TagGroup::GeoLocation,
     "Pomorskie" group: TagGroup::GeoLocation,
-    "Warszawa" group: TagGroup::GeoLocation,
+    "Gdańsk" group: TagGroup::GeoLocation,
+    "Gdynia" group: TagGroup::GeoLocation,
+    "Sopot" group: TagGroup::GeoLocation,
     // Other
     "Hostel",
     "LGBT",
