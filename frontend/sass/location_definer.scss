@@ -1,0 +1,19 @@
+$location-column-height: 75vh;
+
+.location-definer-buttons {
+    z-index: 2;
+    width: max-content;
+    margin-left: auto;
+}
+
+#location-definer-root {
+    margin-top: auto;
+    margin-bottom: auto;
+
+    .location-definer-column {
+        .location-definer-column-content {
+            height: $location-column-height;
+            overflow: scroll;
+        }
+    }
+}

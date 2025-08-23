@@ -214,7 +214,20 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
 
     html!(
         <div class="container">
-            <div class="is-pinned-to-right-bot">
+            <div class="columns" id="location-definer-root">
+                // The idea is that height is capped by LocationEdit window size
+                <div class="column is-one-third location-definer-column">
+                    <div class="box location-definer-column-content">
+                        { all_locations_view }
+                    </div>
+                </div>
+                <div class="column is-two-thirds location-definer-column">
+                    <div class="box location-definer-column-content">
+                        <LocationEdit initial_location_to_edit={selected_location} {location_edit_manager}/>
+                    </div>
+                </div>
+            </div>
+            <div class="box location-definer-buttons">
                 <button class="button is-rounded is-info" onclick={on_new_location_request_cb}>
                     { location_definer_add_label }
                 </button>
@@ -224,15 +237,6 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                 <button class="button is-rounded is-warning ml-2" onclick={on_db_load_request_cb}>
                     { location_definer_load_label }
                 </button>
-            </div>
-            <div class="columns">
-                // The idea is that height is capped by LocationEdit window size
-                <div style="height: inherit; overflow: scroll" class="column is-one-third">
-                    { all_locations_view }
-                </div>
-                <div style="height: min-content" class="column box is-two-thirds">
-                    <LocationEdit initial_location_to_edit={selected_location} {location_edit_manager}/>
-                </div>
             </div>
         </div>
     )
