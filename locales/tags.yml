@@ -5,6 +5,15 @@ location-tags-info:
 select-tags:
   en: Please select tags
   pl: Wybierz oznaczenia, które cię interesują
+tag-group-age:
+  pl: Wiek
+  en: Age
+tag-group-geolocation:
+  pl: Lokalizacja
+  en: Geolocation
+tag-group-sex:
+  pl: Płeć
+  en: Sex
 Female:
   en: "Female"
   pl: "Kobieta"

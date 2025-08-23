@@ -18,9 +18,7 @@ along with this program; if not, see
 
 use yew::prelude::*;
 
-use log::*;
-
-use libsopa::tags::{Tag, Tags};
+use libsopa::tags::Tag;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TagSelectionType {
@@ -94,8 +92,6 @@ pub fn selectable_tag(props: &TagViewProps) -> Html {
             if let Some(selection_changed) = selection_changed.clone() {
                 selection_changed.emit((tag.clone(), next_selection_state));
             }
-
-            debug!("{:?} -> {:?}", tag.clone(), next_selection_state);
         })
     };
 

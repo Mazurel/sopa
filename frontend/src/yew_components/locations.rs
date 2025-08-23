@@ -19,7 +19,7 @@ along with this program; if not, see
 use super::opened_hours::OpenedHoursView;
 use crate::yew_components::{ContactMethodsView, TagSelectionType, TagView};
 use libsopa::locations::Location;
-use libsopa::tags::Tags;
+use libsopa::tags::{get_all_supported_tags, Tags};
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Properties)]
@@ -89,6 +89,10 @@ fn get_matching_tags(all_tags: &Tags, my_tags: &Tags) -> Vec<Html> {
     my_tags
         .get_all_tags_in_order()
         .iter()
+        .filter(|t| {
+            // We want to filter tags that are not supported
+            get_all_supported_tags().has_tag(t)
+        })
         .map(|t| {
             let selection_type = match all_tags.has_tag(*t) {
                 false => TagSelectionType::NonAcceptable,

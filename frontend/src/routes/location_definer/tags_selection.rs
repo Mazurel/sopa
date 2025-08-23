@@ -19,7 +19,7 @@ along with this program; if not, see
 use crate::yew_components::{TagSelectionType, TagView};
 use libsopa::{
     locations::Location,
-    tags::{get_all_supported_tags_in_order, Tag, Tags},
+    tags::{get_all_supported_tags, get_all_supported_tags_in_order, Tag, Tags},
 };
 use yew::prelude::*;
 
@@ -61,9 +61,8 @@ pub fn tags_selection_edit_for_location(props: &TagsSelectionEditForLocationProp
     };
 
     let location_tags = location.tags.clone();
-    let all_tags = use_memo((), |_| Tags::from(get_all_supported_tags_in_order()));
 
-    (*all_tags)
+    get_all_supported_tags()
         .get_all_tags_in_order()
         .into_iter()
         .map(|tag| {

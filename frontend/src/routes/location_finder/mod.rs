@@ -88,13 +88,9 @@ pub fn location_finder(props: &LocationFinderProps) -> Html {
         })
     };
 
-    let tags = use_memo((), |_| {
-        Tags::from(libsopa::tags::get_all_supported_tags_in_order())
-    });
-
     html! {
         <div class="block">
-            <TagPreferenceSelection tags={(*tags).clone()} {on_tag_preference_changed}/>
+            <TagPreferenceSelection {on_tag_preference_changed}/>
             <div class="container">
                 <LocationsView locations={(*locations_in_order_state).clone()} selected_tags={(*tag_preference_state).clone()}/>
             </div>

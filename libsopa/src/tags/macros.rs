@@ -18,7 +18,7 @@ macro_rules! push_tag_without_group_or_do_nothing {
         {}
     };
     ($vec: ident, $tag:literal) => {
-        $vec.push(Tag::new($tag.to_string()));
+        $vec.define_tag($tag.to_string());
     };
 }
 
@@ -28,10 +28,6 @@ macro_rules! define_tags {
         use rust_i18n::t;
         use lazy_static::lazy_static;
         use std::collections::HashMap;
-
-        static ALL_DEFINED_TAGS: [&'static str; super::count_args!($($tag),*)] = [
-            $($tag),*
-        ];
 
         lazy_static! {
             pub static ref TAGS_BY_TAG_GROUP: HashMap<TagGroup, Tags> = {
@@ -49,8 +45,16 @@ macro_rules! define_tags {
                 m
             };
 
-            pub static ref ALL_DEFINED_TAGS_WITHOUT_GROUP: Vec<Tag> = {
-                let mut result = vec![];
+            pub static ref ALL_DEFINED_TAGS: Tags = {
+                let mut result = Tags::new();
+                $(
+                    result.define_tag($tag);
+                )*
+                result
+            };
+
+            pub static ref ALL_DEFINED_TAGS_WITHOUT_GROUP: Tags = {
+                let mut result = Tags::new();
                 $(
                     super::push_tag_without_group_or_do_nothing!(result, $tag $(group: $group_type)?);
                 )*

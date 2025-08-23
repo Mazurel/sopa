@@ -61,23 +61,17 @@ define_tags!(
     "mental illness"
 );
 
-pub fn get_all_supported_tags() -> Vec<Tag> {
-    ALL_DEFINED_TAGS
-        .iter()
-        .map(|tag_name| Tag {
-            name: tag_name.to_string(),
-        })
-        .collect()
+pub fn get_all_supported_tags() -> &'static Tags {
+    &ALL_DEFINED_TAGS
 }
 
-pub fn get_all_supported_tags_without_group() -> Vec<Tag> {
-    ALL_DEFINED_TAGS_WITHOUT_GROUP.clone()
+pub fn get_all_supported_tags_without_group() -> &'static Tags {
+    &ALL_DEFINED_TAGS_WITHOUT_GROUP
 }
 
-pub fn get_all_supported_tags_in_order() -> Vec<Tag> {
-    let mut all_tags = get_all_supported_tags();
-    all_tags.sort_by_key(|tag| tag.human_readable().to_lowercase());
-    all_tags
+// TODO: This should be removed and sorting by order should be performed in the `Tags`
+pub fn get_all_supported_tags_in_order() -> Vec<&'static Tag> {
+    get_all_supported_tags().get_all_tags_in_order()
 }
 
 pub fn get_all_supported_tags_of_group(tag_group: &TagGroup) -> &Tags {
@@ -112,8 +106,8 @@ mod tests {
 
     #[test]
     fn sanity_check_for_tags_with_and_without_groups() {
-        let all_tags = get_all_supported_tags();
-        let all_tags_without_groups = get_all_supported_tags_without_group();
+        let all_tags = get_all_supported_tags().get_all_tags();
+        let all_tags_without_groups = get_all_supported_tags_without_group().get_all_tags();
         let all_tags_of_some_group = get_all_supported_tags_of_group(&TagGroup::Age).get_all_tags();
 
         assert!(all_tags.len() > all_tags_without_groups.len());

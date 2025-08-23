@@ -35,7 +35,6 @@ fn togglable_tag(selected_tags_state: UseStateHandle<Tags>, tag: Tag) -> Html {
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct TagSelectionProps {
-    pub tags: Tags,
     pub on_tag_preference_changed: Callback<TagPreference>,
 }
 
@@ -53,6 +52,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
     }
 
     let ungrouped_interactive_tags = get_all_supported_tags_without_group()
+        .get_all_tags_in_order()
         .into_iter()
         .map(|tag| {
             let selected_tags_state = selected_tags_state.clone();
@@ -66,7 +66,6 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
         let tag_group_name = tag_group.human_readable();
 
         let grouped_interactive_tags = tags_in_group
-            .filtered_by(&props.tags)
             .get_all_tags_in_order()
             .into_iter()
             .map(|tag| {
@@ -77,7 +76,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
 
         grouped_tags_elements.push(html!(
             <div class="block">
-                <h4 class="subtitle is-4">{tag_group_name}</h4>
+                <h4 style="margin-bottom: 0.1em;" class="subtitle is-4">{tag_group_name}</h4>
                 <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
                     {grouped_interactive_tags}
                 </div>
