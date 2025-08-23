@@ -21,7 +21,7 @@ pub mod types;
 pub use types::*;
 
 // Note: These macros are defined in `macros.rs`.
-use super::{count_args, define_tags};
+use super::define_tags;
 
 define_tags!(
     // Sexes
@@ -70,13 +70,17 @@ pub fn get_all_supported_tags() -> Vec<Tag> {
         .collect()
 }
 
+pub fn get_all_supported_tags_without_group() -> Vec<Tag> {
+    ALL_DEFINED_TAGS_WITHOUT_GROUP.clone()
+}
+
 pub fn get_all_supported_tags_in_order() -> Vec<Tag> {
     let mut all_tags = get_all_supported_tags();
     all_tags.sort_by_key(|tag| tag.human_readable().to_lowercase());
     all_tags
 }
 
-pub fn get_all_supported_tags_of_group(tag_group: &TagGroup) -> &Vec<Tag> {
+pub fn get_all_supported_tags_of_group(tag_group: &TagGroup) -> &Tags {
     TAGS_BY_TAG_GROUP.get(tag_group).unwrap() // We know all are supported
 }
 
@@ -101,8 +105,18 @@ mod tests {
             (TagGroup::Sex, Tag::new("Male".to_string())),
         ] {
             let tags = get_all_supported_tags_of_group(&sample_group);
-            assert!(tags.len() > 0);
-            assert!(tags.contains(&sample_entry));
+            assert!(tags.get_all_tags().len() > 0);
+            assert!(tags.has_tag(&sample_entry));
         }
+    }
+
+    #[test]
+    fn sanity_check_for_tags_with_and_without_groups() {
+        let all_tags = get_all_supported_tags();
+        let all_tags_without_groups = get_all_supported_tags_without_group();
+        let all_tags_of_some_group = get_all_supported_tags_of_group(&TagGroup::Age).get_all_tags();
+
+        assert!(all_tags.len() > all_tags_without_groups.len());
+        assert!(all_tags_without_groups.len() > all_tags_of_some_group.len());
     }
 }

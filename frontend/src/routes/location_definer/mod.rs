@@ -213,7 +213,7 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
     };
 
     html!(
-        <>
+        <div class="container">
             <div class="is-pinned-to-right-bot">
                 <button class="button is-rounded is-info" onclick={on_new_location_request_cb}>
                     { location_definer_add_label }
@@ -234,6 +234,6 @@ pub fn location_definer(props: &LocationDefinerProps) -> Html {
                     <LocationEdit initial_location_to_edit={selected_location} {location_edit_manager}/>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

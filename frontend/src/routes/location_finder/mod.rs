@@ -16,9 +16,12 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use crate::yew_components::{LocationView, TagPreferenceSelection};
+mod tag_selection;
+
+use crate::yew_components::LocationView;
 use libsopa::locations::Location;
 use libsopa::tags::Tags;
+use tag_selection::TagPreferenceSelection;
 use yew::prelude::*;
 
 use crate::app::SharedAppState;
@@ -90,10 +93,8 @@ pub fn location_finder(props: &LocationFinderProps) -> Html {
     });
 
     html! {
-        <div class="container">
-            <div class="container">
-                <TagPreferenceSelection tags={(*tags).clone()} {on_tag_preference_changed}/>
-            </div>
+        <div class="block">
+            <TagPreferenceSelection tags={(*tags).clone()} {on_tag_preference_changed}/>
             <div class="container">
                 <LocationsView locations={(*locations_in_order_state).clone()} selected_tags={(*tag_preference_state).clone()}/>
             </div>

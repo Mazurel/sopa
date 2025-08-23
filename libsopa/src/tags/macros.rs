@@ -11,32 +11,50 @@ macro_rules! count_args {
     };
 }
 
+#[macro_export(local_inner_macros)]
+macro_rules! push_tag_without_group_or_do_nothing {
+    ($vec: ident, $tag:literal group: $group_type:expr) => {
+        // Nothing happens here :)
+        {}
+    };
+    ($vec: ident, $tag:literal) => {
+        $vec.push(Tag::new($tag.to_string()));
+    };
+}
+
 #[macro_export]
 macro_rules! define_tags {
     ($($tag:literal $(group: $group_type:expr)?),*) => {
-
         use rust_i18n::t;
         use lazy_static::lazy_static;
         use std::collections::HashMap;
 
-        static ALL_DEFINED_TAGS: [&'static str; count_args!($($tag),*)] = [
+        static ALL_DEFINED_TAGS: [&'static str; super::count_args!($($tag),*)] = [
             $($tag),*
         ];
 
         lazy_static! {
-            pub static ref TAGS_BY_TAG_GROUP: HashMap<TagGroup, Vec<Tag>> = {
+            pub static ref TAGS_BY_TAG_GROUP: HashMap<TagGroup, Tags> = {
                 let mut m = HashMap::new();
 
                 for tag_group in ALL_TAG_GROUPS.iter() {
-                    m.insert(*tag_group, vec![]);
+                    m.insert(*tag_group, Tags::new());
                 }
 
                 $(
                     $(
-                        m.get_mut(&$group_type).unwrap().push(Tag::new($tag.to_string()));
+                        m.get_mut(&$group_type).unwrap().define_tag($tag);
                     )?
                 )*
                 m
+            };
+
+            pub static ref ALL_DEFINED_TAGS_WITHOUT_GROUP: Vec<Tag> = {
+                let mut result = vec![];
+                $(
+                    super::push_tag_without_group_or_do_nothing!(result, $tag $(group: $group_type)?);
+                )*
+                result
             };
         }
 

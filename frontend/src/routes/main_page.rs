@@ -21,7 +21,7 @@ use yew::prelude::*;
 #[function_component(MainPage)]
 pub fn main_page() -> Html {
     html!(
-        <>
+        <div class="container">
             <section class="hero is-small is-warning">
                 <div class="hero-body">
                     <div class="notification is-warning has-text-centered">
@@ -54,6 +54,6 @@ pub fn main_page() -> Html {
                     </p>
                 </div>
             </section>
-        </>
+        </div>
     )
 }

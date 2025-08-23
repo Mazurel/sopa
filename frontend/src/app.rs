@@ -76,7 +76,7 @@ pub fn app() -> Html {
             <div class="is-primary">
                 <NavigationBar {on_view_content_update} shared_app_state={(*shared_app_state).clone()}/>
             </div>
-            <div class="container">
+            <div class="block">
                 {view_content}
             </div>
             <div id="notification-container" class="container">

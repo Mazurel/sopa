@@ -1,3 +1,4 @@
+use rust_i18n::t;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, hash::Hash, str::FromStr};
 
@@ -6,6 +7,18 @@ pub enum TagGroup {
     Sex,
     Age,
     GeoLocation,
+}
+
+impl TagGroup {
+    pub fn human_readable(&self) -> std::borrow::Cow<'static, str> {
+        use TagGroup::*;
+
+        match self {
+            Sex => t!("tag-group-sex"),
+            Age => t!("tag-group-age"),
+            GeoLocation => t!("tag-group-geolocation"),
+        }
+    }
 }
 
 pub const ALL_TAG_GROUPS: &[TagGroup] = &[TagGroup::Sex, TagGroup::Age, TagGroup::GeoLocation];
@@ -97,6 +110,24 @@ impl Tags {
     pub fn without_tag<S: ToString>(&self, tag: S) -> Self {
         let mut tags = self.clone();
         tags.undefine_tag(tag);
+        tags
+    }
+
+    /// "Filter" all tags so that only tags in returned object
+    /// are defined in the `other_tags` object.
+    pub fn filter_by(&mut self, other_tags: &Tags) {
+        let all_self_tags: Vec<Tag> = self.get_all_tags().iter().map(|t| (*t).clone()).collect();
+        for self_tag in all_self_tags {
+            if !other_tags.has_tag(&self_tag) {
+                self.undefine_tag(self_tag);
+            }
+        }
+    }
+
+    /// Works like `filtered_by`, but clones and returns self.
+    pub fn filtered_by(&self, other_tags: &Tags) -> Self {
+        let mut tags = self.clone();
+        tags.filter_by(other_tags);
         tags
     }
 
