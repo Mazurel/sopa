@@ -1,11 +1,15 @@
+@use "animations";
+
 $location-column-height: 75vh;
+$animation-duration: 0.4s;
+$animation-delay: 0.2s;
 
 .location-definer-buttons {
     z-index: 2;
     width: max-content;
     margin-left: auto;
 
-    animation: fadeIn 0.5s ease-out 0.3s both;
+    animation: fadeIn $animation-duration ease-out $animation-delay both;
 }
 
 #location-definer-root {
@@ -18,15 +22,6 @@ $location-column-height: 75vh;
             overflow: scroll;
         }
 
-        animation: fadeIn 0.5s ease-out 0.3s both;
-    }
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
+        animation: fadeIn $animation-duration ease-out $animation-delay both;
     }
 }

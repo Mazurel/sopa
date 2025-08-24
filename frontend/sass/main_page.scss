@@ -1,3 +1,4 @@
+@use "animations";
 @use "../third_party/bulma/sass" as bulma;
 @use "sass:color";
 
@@ -183,49 +184,6 @@
         &:active {
             transform: translateY(0);
         }
-    }
-}
-
-// Animations
-@keyframes slideInFromTop {
-    0% {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInFromBottom {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInScale {
-    0% {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
     }
 }
 

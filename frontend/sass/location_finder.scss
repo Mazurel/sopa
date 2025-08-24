@@ -1,0 +1,20 @@
+@use "animations";
+
+$animation-duration: 0.4s;
+$animation-delay: 0.2s;
+
+#location-finder-root {
+    animation: fadeIn $animation-duration ease-out $animation-delay both;
+}
+
+.tag-flex {
+    .tag {
+        animation: slideInFromTop $animation-duration ease-out $animation-delay
+            both;
+    }
+}
+
+.location {
+    animation: slideInFromBottom $animation-duration ease-out $animation-delay
+        both;
+}

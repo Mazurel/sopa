@@ -77,7 +77,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
         grouped_tags_elements.push(html!(
             <div class="block">
                 <h4 style="margin-bottom: 0.1em;" class="subtitle is-4">{tag_group_name}</h4>
-                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                <div class="is-flex is-flex-direction-row is-flex-wrap-wrap tag-flex">
                     {grouped_interactive_tags}
                 </div>
             </div>
@@ -98,7 +98,7 @@ pub fn tag_selection(props: &TagSelectionProps) -> Html {
                     </div>
                 </div>
                 <div class="column card mt-2 p-1 is-shadowless">
-                    <div class="is-flex is-flex-direction-row is-flex-wrap-wrap p-2">
+                    <div class="is-flex is-flex-direction-row is-flex-wrap-wrap p-2 tag-flex">
                         {ungrouped_interactive_tags}
                     </div>
                 </div>

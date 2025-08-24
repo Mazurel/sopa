@@ -89,7 +89,7 @@ pub fn location_finder(props: &LocationFinderProps) -> Html {
     };
 
     html! {
-        <div class="block">
+        <div id="location-finder-root" class="block">
             <TagPreferenceSelection {on_tag_preference_changed}/>
             <div class="container">
                 <LocationsView locations={(*locations_in_order_state).clone()} selected_tags={(*tag_preference_state).clone()}/>
