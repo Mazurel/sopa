@@ -17,3 +17,30 @@ main-page:alpha-warning-title:
 main-page:alpha-warning-message:
   en: This is early development software. Features may be incomplete, unstable, or subject to change. Use for testing and feedback purposes only.
   pl: To oprogramowanie w wczesnej fazie rozwoju. Funkcje mogą być niekompletne, niestabilne lub mogą ulec zmianie. Używaj tylko do testów i przekazywania opinii.
+main-page:feature-location-finder-title:
+  en: Location Finder
+  pl: Wyszukiwarka Placówek
+main-page:feature-location-finder-description:
+  en: Search and discover support centers based on your specific needs and location.
+  pl: Szukaj i odkrywaj ośrodki wsparcia na podstawie swoich konkretnych potrzeb i lokalizacji.
+main-page:feature-smart-filtering-title:
+  en: Smart Filtering
+  pl: Inteligentne Filtrowanie
+main-page:feature-smart-filtering-description:
+  en: Filter locations by various categories and tags to find exactly what you need.
+  pl: Filtruj lokalizacje według różnych kategorii i tagów, aby znaleźć dokładnie to, czego potrzebujesz.
+main-page:feature-data-management-title:
+  en: Data Management
+  pl: Zarządzanie Danymi
+main-page:feature-data-management-description:
+  en: Import and export location databases with full data preservation and sharing.
+  pl: Importuj i eksportuj bazy danych lokalizacji z pełnym zachowaniem i udostępnianiem danych.
+main-page:cta-title:
+  en: Ready to get started?
+  pl: Gotowy, żeby zacząć?
+main-page:cta-subtitle:
+  en: Find the support you need today
+  pl: Znajdź wsparcie, którego potrzebujesz już dziś
+main-page:cta-button:
+  en: Find Support Centers
+  pl: Znajdź Ośrodki Wsparcia

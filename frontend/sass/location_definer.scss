@@ -4,6 +4,8 @@ $location-column-height: 75vh;
     z-index: 2;
     width: max-content;
     margin-left: auto;
+
+    animation: fadeIn 0.5s ease-out 0.3s both;
 }
 
 #location-definer-root {
@@ -15,5 +17,16 @@ $location-column-height: 75vh;
             height: $location-column-height;
             overflow: scroll;
         }
+
+        animation: fadeIn 0.5s ease-out 0.3s both;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }
