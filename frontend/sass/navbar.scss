@@ -9,8 +9,6 @@ $horizontal-gap: 1rem;
 nav {
     .navbar-menu {
         div {
-            box-shadow: 0 0 10px bulma.$primary;
-
             a {
                 border-radius: 5rem;
                 margin-left: $horizontal-gap;
