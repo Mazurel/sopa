@@ -101,12 +101,12 @@ fn naventry(props: &NavigationEntryProps) -> Html {
 
     html!(
         if props.is_selected {
-            <a class="navbar-item has-text-weight-normal is-size-4 is-active is-selected" {onclick}>
+            <a class="navbar-item has-text-weight-normal is-size-4 is-active selectable is-selected" {onclick}>
                 {route_name}
             </a>
         }
         else {
-            <a class="navbar-item is-primary has-text-weight-normal is-size-4" {onclick}>
+            <a class="navbar-item is-primary has-text-weight-normal is-size-4 selectable" {onclick}>
                 {route_name}
             </a>
         }

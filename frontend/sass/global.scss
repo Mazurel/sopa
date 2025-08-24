@@ -1,12 +1,3 @@
-@use "sass:color";
-@use "../third_party/bulma/sass" as bulma;
-@use "../third_party/bulma/sass/utilities/mixins" as bulma_mixins;
-
-// Settings for navbar
-a.is-selected {
-    background-color: color.adjust(bulma.$primary, $saturation: -12%);
-}
-
 // Global transition setting
 * {
     transition: 377ms;

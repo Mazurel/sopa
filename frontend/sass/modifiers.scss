@@ -24,16 +24,30 @@
 
 $selected_border_width: calc(bulma.$gap / 10);
 
-.selectable {
-    cursor: pointer;
-    border: $selected_border_width solid color.adjust(bulma.$green, $alpha: -1);
+.location {
+    .card-header {
+        background-color: bulma.$info;
+    }
 }
 
-.selectable:hover {
-    border: $selected_border_width solid
-        color.adjust(bulma.$green, $alpha: -0.8);
+.selectable {
+    cursor: pointer;
+    transition: transform 0.5s ease;
+
+    .location .card-header:hover {
+        background-color: color.adjust(bulma.$info, $lightness: 15%);
+    }
 }
 
 .selected {
-    border: $selected_border_width solid bulma.$green;
+    transform: scale(1.05);
+    .location {
+        box-shadow: 0 0 5px color.adjust(bulma.$info, $alpha: 0.5);
+        .card-header {
+            background-color: color.adjust(
+                bulma.$info,
+                $lightness: 10%
+            ) !important;
+        }
+    }
 }

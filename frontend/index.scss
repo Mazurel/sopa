@@ -8,11 +8,12 @@
     $cyan: #00a7e1
 );
 
-@use "sass/fonts";
-@use "sass/notifications";
+@use "sass/global";
 @use "sass/timepicker";
-@use "sass/modifiers";
 @use "sass/location_definer";
 @use "sass/location_finder";
+@use "sass/modifiers";
 @use "sass/main_page";
-@use "sass/global";
+@use "sass/navbar";
+@use "sass/notifications";
+@use "sass/fonts";

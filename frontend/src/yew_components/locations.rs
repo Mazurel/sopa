@@ -133,13 +133,18 @@ pub fn location_view(props: &LocationViewProps) -> Html {
         })
     };
 
-    let mut wrapper_classes = classes!("component", "is-max-tablet", "p-5");
+    let mut wrapper_classes = classes!(
+        "component",
+        "is-max-tablet",
+        "p-5",
+        "location-root",
+        "selectable"
+    );
+
     if is_selectable {
         let selected_state = props.selection_settings.clone().unwrap().state;
         if selected_state {
             wrapper_classes.push("selected");
-        } else {
-            wrapper_classes.push("selectable");
         }
     }
 
@@ -147,7 +152,7 @@ pub fn location_view(props: &LocationViewProps) -> Html {
         <div class={wrapper_classes} {onclick}>
             <div class="location card">
                 <div class="card-header">
-                    <div class="card-header-title has-background-info has-text-dark is-size-4 is-capitalized">
+                    <div class="card-header-title has-text-dark is-size-4 is-capitalized">
                         {location.name.clone()}
                     </div>
                 </div>

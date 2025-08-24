@@ -95,11 +95,6 @@
             transform 0.3s ease,
             box-shadow 0.3s ease;
 
-        &:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
         &.support-icon {
             background: linear-gradient(
                 45deg,
@@ -135,11 +130,7 @@
         border-radius: 12px;
         padding: 2rem;
         height: 100%;
-
-        &:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
+        animation: slideInFromBottom 0.6s ease-out 0.4s both;
     }
 
     .cta-section {
@@ -170,20 +161,6 @@
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
-
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(76, 149, 108, 0.4);
-            background: linear-gradient(
-                45deg,
-                color.adjust(bulma.$primary, $lightness: 5%),
-                color.adjust(bulma.$primary, $lightness: 20%)
-            );
-        }
-
-        &:active {
-            transform: translateY(0);
-        }
     }
 }
 

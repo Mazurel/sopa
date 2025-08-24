@@ -1,0 +1,55 @@
+@use "sass:color";
+@use "../third_party/bulma/sass" as bulma;
+@use "../third_party/bulma/sass/utilities/mixins" as bulma_mixins;
+
+$vertical-gap: 0.5rem;
+$horizontal-gap: 1rem;
+
+// Settings for navbar
+nav {
+    .navbar-menu {
+        div {
+            box-shadow: 0 0 10px bulma.$primary;
+
+            a {
+                border-radius: 5rem;
+                margin-left: $horizontal-gap;
+                height: min-content;
+                padding: 1rem;
+
+                /* centering */
+                margin-top: auto;
+                margin-bottom: auto;
+
+                /* Dropdowns */
+                div {
+                    a {
+                        margin-right: $horizontal-gap;
+                        margin-top: $vertical-gap;
+                        margin-bottom: $vertical-gap;
+                    }
+                }
+
+                &.selectable {
+                    transition: background-color 0.5s ease;
+                    transition: transform 0.5s ease;
+
+                    &.is-selected {
+                        background-color: color.adjust(
+                            bulma.$primary,
+                            $lightness: 10%
+                        );
+                    }
+
+                    &:hover {
+                        background-color: color.adjust(
+                            bulma.$primary,
+                            $lightness: 20%
+                        );
+                        transform: translateY(0.2rem);
+                    }
+                }
+            }
+        }
+    }
+}
