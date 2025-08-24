@@ -26,6 +26,7 @@ use crate::routes::{
 };
 
 use yew::prelude::*;
+use yew::{function_component, use_effect_with, use_state};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Route {
@@ -213,14 +214,6 @@ pub struct NavigationBarProps {
     pub shared_app_state: SharedAppState,
 }
 
-pub struct NavigationBar {
-    route: Route,
-}
-
-pub enum NavigationMessage {
-    ChangeRoute(Route),
-}
-
 fn get_default_route() -> Route {
     for route in ALL_ROUTES {
         if route.into_route_url_pathname() == crate::window_location::read_window_path() {
@@ -231,92 +224,104 @@ fn get_default_route() -> Route {
     Route::MainPage
 }
 
-impl Component for NavigationBar {
-    type Message = NavigationMessage;
-    type Properties = NavigationBarProps;
-
-    fn create(_ctx: &Context<Self>) -> Self {
-        NavigationBar {
-            route: get_default_route(),
+#[function_component]
+pub fn NavigationBar(props: &NavigationBarProps) -> Html {
+    let route = use_state(|| {
+        let provided_route = *props.shared_app_state.current_route_state.clone();
+        if provided_route.is_some() {
+            provided_route.unwrap()
+        } else {
+            get_default_route()
         }
+    });
+
+    // Emit initial callback
+    {
+        let route_state = route.clone();
+        let on_view_content_update = props.on_view_content_update.clone();
+
+        use_effect_with((), move |_| {
+            on_view_content_update.emit(*route_state);
+        })
     }
 
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        let mut navbar_entries: Vec<Html> = Vec::new();
-        let shared_app_state = ctx.props().shared_app_state.clone();
-        navbar_entries.reserve(ALL_ROUTES.len());
-
-        for entry in ALL_ROUTES {
-            let is_selected: bool = self.route.eq(&entry);
-            let html_entry = html!(
-                <NavigationEntry
-                    route={entry}
-                    on_selection={ctx.link().callback(|route| { NavigationMessage::ChangeRoute(route) })}
-                    {is_selected}
-                />
-            );
-            navbar_entries.push(html_entry);
-        }
-
-        // Add entry representing selection of language
-        {
-            let shared_app_state = shared_app_state.clone();
-            navbar_entries.push(html!(<LanguageSelectionNavigationEntry {shared_app_state}/>));
-        }
-        // Add entry representing selection of color scheme
-        {
-            let shared_app_state = shared_app_state.clone();
-            navbar_entries.push(html!(<ColorSchemeSelectionNavigationEntry {shared_app_state}/>));
-        }
-
-        html!(
-            <div class="">
-                <nav class="navbar is-primary mb-6" role="navigation" aria-label="main navigation">
-                    <div class="navbar-brand">
-                        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-                            <span aria-hidden="false"></span>
-                            <span aria-hidden="false"></span>
-                            <span aria-hidden="false"></span>
-                            <span aria-hidden="false"></span>
-                        </a>
-                    </div>
-                    <div class="navbar-menu">
-                        <div class="navbar-start">
-                            <div class="navbar-item is-size-1 is-logo-font is-unselectable">
-                                {"SOPa"}
-                            </div>
-                        </div>
-                        <div class="navbar-end">
-                            {navbar_entries}
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        )
-    }
-
-    fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
-        if first_render {
-            let props = ctx.props();
-            props.on_view_content_update.emit(self.route.clone());
-        }
-    }
-
-    fn update(&mut self, ctx: &Context<Self>, message: NavigationMessage) -> bool {
-        match message {
-            NavigationMessage::ChangeRoute(route) => {
-                if self.route != route {
-                    self.route = route;
-                    crate::window_location::set_window_path(
-                        self.route.into_route_url_pathname().to_string(),
-                    );
-                    let props = ctx.props();
-                    props.on_view_content_update.emit(self.route.clone());
-                    true
-                } else {
-                    false
+    // Update route when prop got changed
+    {
+        let route = route.clone();
+        use_effect_with(
+            props.shared_app_state.current_route_state.clone(),
+            move |new_route| {
+                if let Some(new_route) = *new_route.clone() {
+                    route.set(new_route);
                 }
-            }
-        }
+            },
+        );
     }
+
+    let on_route_change = {
+        let route_state = route.clone();
+        let on_view_content_update = props.on_view_content_update.clone();
+        Callback::from(move |new_route: Route| {
+            if *route_state != new_route {
+                route_state.set(new_route);
+                crate::window_location::set_window_path(
+                    new_route.into_route_url_pathname().to_string(),
+                );
+                on_view_content_update.emit(new_route);
+            }
+        })
+    };
+
+    let mut navbar_entries: Vec<Html> = Vec::new();
+    let shared_app_state = props.shared_app_state.clone();
+    navbar_entries.reserve(ALL_ROUTES.len());
+
+    for entry in ALL_ROUTES {
+        let is_selected: bool = entry == *route;
+
+        let html_entry = html!(
+            <NavigationEntry
+                route={entry}
+                on_selection={on_route_change.clone()}
+                {is_selected}
+            />
+        );
+        navbar_entries.push(html_entry);
+    }
+
+    // Add entry representing selection of language
+    {
+        let shared_app_state = shared_app_state.clone();
+        navbar_entries.push(html!(<LanguageSelectionNavigationEntry {shared_app_state}/>));
+    }
+    // Add entry representing selection of color scheme
+    {
+        let shared_app_state = shared_app_state.clone();
+        navbar_entries.push(html!(<ColorSchemeSelectionNavigationEntry {shared_app_state}/>));
+    }
+
+    html!(
+        <div class="">
+            <nav class="navbar is-primary mb-6" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                        <span aria-hidden="false"></span>
+                        <span aria-hidden="false"></span>
+                        <span aria-hidden="false"></span>
+                        <span aria-hidden="false"></span>
+                    </a>
+                </div>
+                <div class="navbar-menu">
+                    <div class="navbar-start">
+                        <div class="navbar-item is-size-1 is-logo-font is-unselectable">
+                            {"SOPa"}
+                        </div>
+                    </div>
+                    <div class="navbar-end">
+                        {navbar_entries}
+                    </div>
+                </div>
+            </nav>
+        </div>
+    )
 }

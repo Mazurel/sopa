@@ -2,7 +2,7 @@ use gloo::utils::window;
 
 use crate::cookies;
 
-const DEFAULT_LANGUAGE: &str = "en";
+const DEFAULT_LANGUAGE: &str = "pl";
 
 // TODO: Add here error handling
 
@@ -20,6 +20,7 @@ fn get_browser_language_setting_in_cookie() -> Option<String> {
 fn transform_browser_language(browser_language: String) -> String {
     match browser_language.as_str() {
         "en-US" => "en".to_string(),
+        "pl-PL" => "pl".to_string(),
         _ => browser_language,
     }
 }

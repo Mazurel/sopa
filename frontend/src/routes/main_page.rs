@@ -86,7 +86,7 @@ pub fn MainPage(props: &MainPageProps) -> Html {
 
                     // Feature Cards
                     <div class="columns is-multiline">
-                        <div class="column is-4">
+                        <div class="column is-half">
                             <div class="box feature-card has-text-centered">
                                 <div class="feature-icon help-icon">
                                     {"🔍"}
@@ -97,18 +97,7 @@ pub fn MainPage(props: &MainPageProps) -> Html {
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-4">
-                            <div class="box feature-card has-text-centered">
-                                <div class="feature-icon community-icon">
-                                    {"🏷️"}
-                                </div>
-                                <h3 class="title is-5 mb-3">{t!("main-page:feature-smart-filtering-title")}</h3>
-                                <p>
-                                    {t!("main-page:feature-smart-filtering-description")}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="column is-4">
+                        <div class="column is-half">
                             <div class="box feature-card has-text-centered">
                                 <div class="feature-icon support-icon">
                                     {"💾"}

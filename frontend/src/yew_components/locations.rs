@@ -133,15 +133,10 @@ pub fn location_view(props: &LocationViewProps) -> Html {
         })
     };
 
-    let mut wrapper_classes = classes!(
-        "component",
-        "is-max-tablet",
-        "p-5",
-        "location-root",
-        "selectable"
-    );
+    let mut wrapper_classes = classes!("component", "is-max-tablet", "p-5", "location-root");
 
     if is_selectable {
+        wrapper_classes.push("selectable");
         let selected_state = props.selection_settings.clone().unwrap().state;
         if selected_state {
             wrapper_classes.push("selected");
