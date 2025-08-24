@@ -14,8 +14,8 @@
 }
 
 .is-centered-vertically-in-parent {
-    margin-top: auto;
-    margin-bottom: auto;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
 }
 
 //
@@ -50,4 +50,12 @@ $selected_border_width: calc(bulma.$gap / 10);
             ) !important;
         }
     }
+}
+
+.tag.is-danger {
+    box-shadow: 0 0 0.3rem color.adjust(bulma.$danger, $alpha: 0.4);
+}
+
+.tag.is-primary {
+    box-shadow: 0 0 0.3rem color.adjust(bulma.$success, $alpha: 0.4);
 }

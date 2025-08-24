@@ -16,11 +16,18 @@ along with this program; if not, see
 <https://www.gnu.org/licenses/>.
 */
 
-use crate::window_location;
+use crate::{app::SharedAppState, yew_components::navigation::Route};
 use yew::prelude::*;
 
-#[function_component(MainPage)]
-pub fn main_page() -> Html {
+#[derive(Properties, PartialEq)]
+pub struct MainPageProps {
+    pub app_state: SharedAppState,
+}
+
+#[function_component]
+pub fn MainPage(props: &MainPageProps) -> Html {
+    let current_route_state = props.app_state.current_route_state.clone();
+
     html!(
         <div class="main-page">
             // Alpha Warning Banner
@@ -125,9 +132,8 @@ pub fn main_page() -> Html {
                         <div class="buttons is-centered">
                             <button
                                 class="cta-button"
-                                onclick={Callback::from(|_| {
-                                    // TODO: Make this work !!!
-                                    window_location::set_window_path("/location-finder".to_string());
+                                onclick={Callback::from(move |_| {
+                                    current_route_state.set(Some(Route::LocationFinder));
                                 })}
                             >
                                 <span class="icon-text">

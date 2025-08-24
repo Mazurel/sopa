@@ -31,6 +31,7 @@ use crate::yew_components::navigation::{NavigationBar, Route};
 pub struct SharedAppState {
     pub locations_db: UseStateHandle<LocationsDatabase>,
     pub notifications: NotificationManager,
+    pub current_route_state: UseStateHandle<Option<Route>>,
 }
 
 #[function_component(App)]
@@ -43,6 +44,7 @@ pub fn app() -> Html {
     let shared_app_state = {
         let notifications_counter = use_state(|| 0);
         let notifications = notifications.clone();
+        let selected_route = selected_route.clone();
         use_state(move || {
             let notification_manager = NotificationManager {
                 notifications,
@@ -51,6 +53,7 @@ pub fn app() -> Html {
             SharedAppState {
                 locations_db,
                 notifications: notification_manager,
+                current_route_state: selected_route,
             }
         })
     };

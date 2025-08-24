@@ -19,7 +19,7 @@ along with this program; if not, see
 use crate::yew_components::{TagSelectionType, TagView};
 use libsopa::{
     locations::Location,
-    tags::{get_all_supported_tags, get_all_supported_tags_in_order, Tag, Tags},
+    tags::{get_all_supported_tags, Tag},
 };
 use yew::prelude::*;
 

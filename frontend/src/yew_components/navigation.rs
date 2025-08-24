@@ -63,7 +63,7 @@ impl Route {
             Route::LocationFinder => html!(<LocationFinder {app_state}/>),
             Route::About => html!(<AboutPage/>),
             Route::LocationDefiner => html!(<LocationDefiner {app_state}/>),
-            Route::MainPage => html!(<MainPage/>),
+            Route::MainPage => html!(<MainPage {app_state}/>),
         }
     }
 }
